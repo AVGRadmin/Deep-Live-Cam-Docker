@@ -10,7 +10,7 @@ root_output="output"
 source_dir="${root_output}/source_files" 
 target_dir="${root_output}/target_files"
 output_dir="${root_output}/output_files"
-enhanced_folder="${output_dir}/enhanced_files"
+enhanced_folder="${root_output}/enhanced_files"
 
 ## Startup
 # Ensure output directory exists
