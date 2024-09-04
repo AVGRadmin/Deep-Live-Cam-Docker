@@ -1,5 +1,8 @@
 # Makefile to download and set up models
 
+## CUDA
+CUDA_VERSION := "12.2"
+
 # Define directories
 MODEL_DIR := models
 INSIGHTFACE_DIR := $(MODEL_DIR)/.insightface/models/buffalo_l
@@ -14,8 +17,6 @@ GENDER_AGE_URL := https://huggingface.co/DIAMONIK7777/antelopev2/resolve/main/ge
 PARSING_PARSET_URL := https://huggingface.co/gmk123/GFPGAN/resolve/main/parsing_parsenet.pth
 DETECTION_RESNET_URL := https://huggingface.co/sinadi/aar/resolve/main/detection_Resnet50_Final.pth
 
-## CUDA
-CUDA_VERSION := "12.2"
 # Targets
 .PHONY: clean clean-all init all setup_models run
 
@@ -24,9 +25,8 @@ re: clean init setup_models run
 init: 
 	mkdir -p models
 	
-
 run: 
-	docker compose run Deep-Swap-12_2
+	docker compose run Deep-Live-Cam
 
 clean: owner
 	rm -rf models model-pool
