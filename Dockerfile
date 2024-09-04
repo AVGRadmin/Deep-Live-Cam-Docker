@@ -37,9 +37,9 @@ COPY app/requirements_linux.txt /app/requirements.txt
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /app/requirements.txt
-RUN mkdir -p /app/models && \
-    curl -L -o /app/models/GFPGANv1.4.pth https://huggingface.co/hacksider/deep-live-cam/resolve/main/GFPGANv1.4.pth && \
-    curl -L -o /app/models/inswapper_128_fp16.onnx https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx
+# RUN mkdir -p /app/models && \
+#    curl -L -o /app/models/GFPGANv1.4.pth https://huggingface.co/hacksider/deep-live-cam/resolve/main/GFPGANv1.4.pth && \
+#    curl -L -o /app/models/inswapper_128_fp16.onnx https://huggingface.co/hacksider/deep-live-cam/resolve/main/inswapper_128_fp16.onnx
 
 # Ensure all scripts are executable
 RUN chmod -R +x /app
