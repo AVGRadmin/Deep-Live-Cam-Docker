@@ -3,6 +3,7 @@ import cv2
 import threading
 import gfpgan
 import os
+import sys
 
 import modules.globals
 import modules.processors.frame.core
@@ -16,9 +17,12 @@ THREAD_SEMAPHORE = threading.Semaphore()
 THREAD_LOCK = threading.Lock()
 NAME = 'DLC.FACE-ENHANCER'
 
-
+  
 def pre_check() -> bool:
-    download_directory_path = resolve_relative_path('..\models')
+    if sys.platform == "linux":
+        download_directory_path = resolve_relative_path('../models')
+    else:
+        download_directory_path = resolve_relative_path('..\models')
     conditional_download(download_directory_path, ['https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth'])
     return True
 
