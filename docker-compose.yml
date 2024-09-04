@@ -22,14 +22,10 @@ x-base: &base
   runtime: nvidia
 
 services:
-  Deep-Swap-12_2:
+  Deep-Live-Cam:
     <<: *base
     image: docker.io/avgradmin/deep-swap:v0.1.2-cuda-12.2
     build:
       context: .
       dockerfile: docker/Dockerfile.cuda12-2  
     command: ["/bin/bash", "/app/docker_script.sh" ]
-
-  Deep-Swap-11_8:
-    <<: *base
-    image: avgradmin/deep-swap:v0.0.4-cuda11

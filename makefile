@@ -1,4 +1,8 @@
 # Makefile to download and set up models
+# I use this to download the models as i know that these are working with the current setup on my workstations. Models auto downloaded by the python script doesen't work for me, so i've made this script after hours of looking for the correct models that works together.
+# Consider uploading your own models from the urls provided by the maintainers of [Deep-Live-Cam](https://github.com/hacksider/Deep-Live-Cam) if you don't trust the links in this file.
+## CUDA
+CUDA_VERSION := "12.2"
 
 # Define directories
 MODEL_DIR := models
@@ -14,8 +18,6 @@ GENDER_AGE_URL := https://huggingface.co/DIAMONIK7777/antelopev2/resolve/main/ge
 PARSING_PARSET_URL := https://huggingface.co/gmk123/GFPGAN/resolve/main/parsing_parsenet.pth
 DETECTION_RESNET_URL := https://huggingface.co/sinadi/aar/resolve/main/detection_Resnet50_Final.pth
 
-## CUDA
-CUDA_VERSION := "12.2"
 # Targets
 .PHONY: clean clean-all init all setup_models run
 
@@ -24,9 +26,8 @@ re: clean init setup_models run
 init: 
 	mkdir -p models
 	
-
 run: 
-	docker compose run Deep-Swap-12_2
+	docker compose run Deep-Live-Cam
 
 clean: owner
 	rm -rf models model-pool

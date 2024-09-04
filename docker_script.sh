@@ -17,7 +17,6 @@ enhanced_folder="${root_output}/enhanced_files"
 mkdir -p "${output_dir}"
 mkdir -p "${enhanced_folder}"
 
-# Function to generate a unique filename
 generate_unique_filename() {
     local base_name=$1
     local output_dir=$2
@@ -32,7 +31,6 @@ generate_unique_filename() {
     echo "${output_file}"
 }
 
-# Function to process files
 process_files() {
     for target_file in "${target_dir}"/*.${target_ext}; do
         if [ ! -e "${target_file}" ]; then
@@ -48,10 +46,7 @@ process_files() {
                 continue
             fi
 
-            # Generate a unique output file name
-
             input_base_name=$(basename "${input_file}")
-
             name=$(echo "$input_base_name" | sed "s/.$source_ext/_/g")${base_name}
             # Generate a unique output file name
             output_file=$(generate_unique_filename "${name}" "${output_dir}")
@@ -86,7 +81,6 @@ process_files() {
                     --keep-frames \
                     --keep-audio \
                     --max-memory 8
-
         done
     done
 }
