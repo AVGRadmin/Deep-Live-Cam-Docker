@@ -19,7 +19,7 @@ Before you start, ensure that the following are installed on your system:
 
 - Docker (with NVIDIA GPU support)
 - Docker Compose
-- CUDA Toolkit (version 12.2)
+- CUDA Toolkit (version 12.2) **NOTE_** I am using 12.2 for "personal" reasons, but this is not officially supported by the maintainers.
 - Git
 #### Setup Instructions
 ##### 1. Download and Set Up Models
