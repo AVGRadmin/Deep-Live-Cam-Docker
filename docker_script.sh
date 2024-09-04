@@ -1,12 +1,18 @@
 #!/bin/bash
 
+## Settings
+# Target extentions
 target_ext="jpg" # [jpg, png, mp4 ...]
-source_ext="jpg"
-# Define paths
-source_dir="output/source_files" 
-target_dir="output/target_files"
-output_dir="output/output_files"
-enhanced_folder="output/enhanced"
+source_ext="jpg" # [jpg, png ...]
+
+# Output paths
+root_output="output"
+source_dir="${root_output}/source_files" 
+target_dir="${root_output}/target_files"
+output_dir="${root_output}/output_files"
+enhanced_folder="${output_dir}/enhanced_files"
+
+## Startup
 # Ensure output directory exists
 mkdir -p "${output_dir}"
 mkdir -p "${enhanced_folder}"
@@ -28,12 +34,6 @@ generate_unique_filename() {
 
 # Function to process files
 process_files() {
-
-    local target_ext=$1
-    local source_ext=$2
-    local in_dir=$3
-    local run_face_enhance=$4 
-
     for target_file in "${target_dir}"/*.${target_ext}; do
         if [ ! -e "${target_file}" ]; then
             echo "No target files with extension ${target_ext} found in ${target_dir}"
@@ -71,6 +71,7 @@ process_files() {
                 --keep-audio \
                 --max-memory 8
 
+            # Comment out to skip face enhancing
             echo "Saved to ${output_file}"
                     python3 run.py \
                     -s "${input_file}" \
@@ -89,58 +90,6 @@ process_files() {
         done
     done
 }
-# Function to process files
-enhance_files() {
-    local target_ext=$1
-    local source_ext=$2
-    local target_dir=$3
-    local source_dir=$4
-    local output_dir=$5
-    echo "No target files with extension ${target_ext} found in ${target_dir}"
-    local frame_processor=$6
-    for target_file in "${target_dir}"/*.${target_ext}; do
-        if [ ! -e "${target_file}" ]; then
-            echo "No target files with extension ${target_ext} found in ${target_dir}"
-            continue
-        fi
-        target_base_name=$(basename "${target_file}")
-        
-
-        for input_file in "${source_dir}"/*.${source_ext}; do
-            if [ ! -e "${source_dir}" ]; then
-                echo "No input files found in ${source_dir}"
-                continue
-            fi
-            input_base_name=$(basename "${input_file}")
-            substr=$(echo "$input_base_name" | sed "s/.$source_ext//g")
-            
-            if [[ $target_file == *"$substr"* ]]; then
-               
-                name=$(echo "$input_base_name" | sed "s/.$source_ext/_enhanced.${target_ext}/g")
-                # Generate a unique output file name
-                output_file=$(generate_unique_filename "${name}" "${output_dir}")
-                # Run Docker Compose with overridden command
-                echo $output_file
-                docker compose run --rm  webdeep \
-                    -s "${input_file}" \
-                    -t "${target_file}" \
-                    -o "${output_file}" \
-                    --execution-provider cuda \
-                    --frame-processor "face_enhancer" \
-                    --execution-threads 4 \
-                    --video-encoder libx265 \
-                    --video-quality 0 \
-                    --keep-fps \
-                    --keep-frames \
-                    --keep-audio \
-                    --max-memory 6
 
 
-                echo "Saved to ${output_file}"
-            fi
-        done
-    done
-}
-
-
-process_files "${target_ext}" "${source_ext}" "${source_dir}" true
+process_files 
