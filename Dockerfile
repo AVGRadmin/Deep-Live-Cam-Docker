@@ -30,11 +30,9 @@ RUN apt-get update && \
 
 RUN pip install --upgrade pip
 
-COPY app/requirements_linux.txt /app/requirements.txt
+COPY ./requirements_linux.txt /app/requirements.txt
 
 RUN pip install --no-cache-dir -r /app/requirements.txt
-
-RUN chmod -R +x /app
 
 WORKDIR /app
 
