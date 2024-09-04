@@ -38,8 +38,7 @@ clean-all: clean
 
 setup_models: owner clean
 	git clone https://huggingface.co/AVGRadmin/model-pool
-	mkdir -p models
-	mv model-pool/models/* models/
+	mv model-pool/models models
 	rm -rf model-pool
 build:
 	docker build -t Deep-Swap-Docker:latest ./docker/Dockerfile.$(CUDA_VERSION)
