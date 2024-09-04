@@ -24,7 +24,7 @@ x-base: &base
 services:
   Deep-Swap-12_2:
     <<: *base
-    image: docker.io/avgradmin/deep-swap:v0.1.1-cuda-12.2
+    image: docker.io/avgradmin/deep-swap:v0.1.2-cuda-12.2
     build:
       context: .
       dockerfile: docker/Dockerfile.cuda12-2  
