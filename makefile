@@ -1,5 +1,6 @@
 # Makefile to download and set up models
-
+# I use this to download the models as i know that these are working with the current setup on my workstations. Models auto downloaded by the python script doesen't work for me, so i've made this script after hours of looking for the correct models that works together.
+# Consider uploading your own models from the urls provided by the maintainers of [Deep-Live-Cam](https://github.com/hacksider/Deep-Live-Cam) if you don't trust the links in this file.
 ## CUDA
 CUDA_VERSION := "12.2"
 
