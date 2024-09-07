@@ -25,13 +25,13 @@ def pre_check() -> bool:
 
 
 def pre_start() -> bool:
-    if not is_image(modules.globals.source_path):
+    if not is_image(modules.globals.source_path) and not modules.globals.source_folder_path:
         update_status('Select an image for source path.', NAME)
         return False
     elif not get_one_face(cv2.imread(modules.globals.source_path)):
         update_status('No face in source path detected.', NAME)
         return False
-    if not is_image(modules.globals.target_path) and not is_video(modules.globals.target_path):
+    if not is_image(modules.globals.target_path) and not is_video(modules.globals.target_path) and not modules.globals.target_folder_path:
         update_status('Select an image or video for target path.', NAME)
         return False
     return True
