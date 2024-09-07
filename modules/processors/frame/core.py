@@ -14,7 +14,8 @@ FRAME_PROCESSORS_INTERFACE = [
     'pre_start',
     'process_frame',
     'process_image',
-    'process_video'
+    'process_video',
+    'process_target_folder'
 ]
 
 
@@ -71,3 +72,10 @@ def process_video(source_path: str, frame_paths: list[str], process_frames: Call
     with tqdm(total=total, desc='Processing', unit='frame', dynamic_ncols=True, bar_format=progress_bar_format) as progress:
         progress.set_postfix({'execution_providers': modules.globals.execution_providers, 'execution_threads': modules.globals.execution_threads, 'max_memory': modules.globals.max_memory})
         multi_process_frame(source_path, frame_paths, process_frames, progress)
+
+def process_target_folder(source_path: str, target_frame_paths: list[str], process_frames: Callable[[str, List[str], Any], None]) -> None:
+    progress_bar_format = '{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'
+    total = len(target_frame_paths)
+    with tqdm(total=total, desc='Processing', unit='frame', dynamic_ncols=True, bar_format=progress_bar_format) as progress:
+        progress.set_postfix({'execution_providers': modules.globals.execution_providers, 'execution_threads': modules.globals.execution_threads, 'max_memory': modules.globals.max_memory})
+        multi_process_frame(source_path, target_frame_paths, process_frames, progress)

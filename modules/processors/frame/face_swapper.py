@@ -91,3 +91,6 @@ def process_image(source_path: str, target_path: str, output_path: str) -> None:
 
 def process_video(source_path: str, temp_frame_paths: List[str]) -> None:
     modules.processors.frame.core.process_video(source_path, temp_frame_paths, process_frames)
+    
+def process_target_folder(source_path: str, temp_frame_paths: List[str]) -> None:
+    modules.processors.frame.core.process_target_folder(source_path, temp_frame_paths, process_frames)
