@@ -290,53 +290,45 @@ def handle_multiple_files():
             
             # Process
             update_status('Progressing...', frame_processor.NAME)
+            
+            # Handle source file(s)
+            source_files = []
             if modules.globals.source_folder_path:
                 source_files = next(os.walk(modules.globals.source_folder_path), (None, None, []))[2]
-                for source_file in source_files:
-                    if not ((has_image_extension(source_file) or has_video_extension(source_file))):
-                        continue
-                    # Create a dedicated output folder for each source frame
-                    output_subfolder_name = os.path.splitext(source_file)[0]  # Use the frame name without extension as the folder name
-                    output_subfolder_path = os.path.join(modules.globals.output_path, output_subfolder_name)
-                    os.makedirs(output_subfolder_path, exist_ok=True)
-
-                    # Create files to modify
-                    update_status('Copying files...', frame_processor.NAME)
-                    output_file = []  # Reset output frames for each source frame
-                    for target in target_frames:
-                        target = os.path.join(modules.globals.target_folder_path, target)
-
-                        if (has_image_extension(source_file) or has_video_extension(source_file)) and (has_image_extension(target) or has_video_extension(target)):
-                            output_file_name = f"{os.path.splitext(source_file)[0]}_{os.path.basename(target)}"
-                            output_file_path = os.path.join(output_subfolder_path, output_file_name)
-
-                            shutil.copy(target, output_file_path)
-                            output_file.append(output_file_path)
-
-                    # Process
-                    modules.globals.source_path = f"{modules.globals.source_folder_path}/{source_file}"
-                    for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
-                        if not frame_processor.pre_start():
-                            return
-                    frame_processor.process_target_folder(modules.globals.source_path, output_file)
             else:
-                
-                #Create files to modify
+                if modules.globals.source_path:
+                    source_files.append(modules.globals.source_path)
+                else:
+                    update_status('Error: No input source defined..')
+                    print('Error: No input source defined..')
+                    return
+            # Handle source file(s) 
+            for source_file in source_files:
+                if not ((has_image_extension(source_file) or has_video_extension(source_file))):
+                    continue
+                # Create a dedicated output folder for each source frame
+                output_subfolder_name = os.path.splitext(source_file)[0]  # Use the frame name without extension as the folder name
+                output_subfolder_path = os.path.join(modules.globals.output_path, output_subfolder_name)
+                os.makedirs(output_subfolder_path, exist_ok=True)
+
+                # Create files to modify
                 update_status('Copying files...', frame_processor.NAME)
+                output_file = []  # Reset output frames for each source frame
                 for target in target_frames:
-                    if (has_image_extension(source_file) or has_video_extension(source_file))and(has_image_extension(target) or has_video_extension(target)):
-                        output_file_name = os.path.splitext(os.path.basename(modules.globals.source_path)[0])+os.path.basename(target)
-                        output_file_path = os.path.join(modules.globals.output_path ,output_file_name)
-                        shutil.copy(target,output_file_path)
+                    target = os.path.join(modules.globals.target_folder_path, target)
+
+                    if (has_image_extension(source_file) or has_video_extension(source_file)) and (has_image_extension(target) or has_video_extension(target)):
+                        output_file_name = f"{os.path.splitext(source_file)[0]}_{os.path.basename(target)}"
+                        output_file_path = os.path.join(output_subfolder_path, output_file_name)
+                        shutil.copy(target, output_file_path)
                         output_file.append(output_file_path)
-                    # output_frames = next(os.walk(modules.globals.target_folder_path), (None, None, []))[2] 
-               
+
                 # Process
+                modules.globals.source_path = f"{modules.globals.source_folder_path}/{source_file}"
                 for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
                     if not frame_processor.pre_start():
                         return
-                
-                frame_processor.process_target_folder(modules.globals.source_path, output_file) 
-            release_resources()
+                frame_processor.process_target_folder(modules.globals.source_path, output_file)
+
             print("We are done! I dont know if we did it, but i am done. You do the debugging!")
         return
