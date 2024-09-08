@@ -9,9 +9,11 @@ The developers of this software are aware of its possible unethical applications
 
 Users of this software are expected to use this software responsibly while abiding by local laws. If the face of a real person is being used, users are required to get consent from the concerned person and clearly mention that it is a deepfake when posting content online. Developers of this software will not be responsible for actions of end-users.
 
+## Issues 
+Known issues will bee added in my overhead repo for this fork. See docker section below.
 ## How do I install it?
 ### Docker
-All docker related commits and pushes will be undone in this repo. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
+Using docker directly inside this repo is deprecated. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
 
 ### Basic: It is more likely to work on your computer but it will also be very slow. You can follow instructions for the basic install (This usually runs via **CPU**)
 #### 1.Setup your platform
