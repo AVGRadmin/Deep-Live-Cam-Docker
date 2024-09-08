@@ -246,20 +246,35 @@ def start() -> None:
             update_status('Copying files...', frame_processor.NAME)
             output_files = []  # Reset output frames for each source frame
             for target_file in target_files:
-                target_file_path = os.path.join(modules.globals.target_folder_path, target_file)
+                if modules.globals.target_folder_path:
+                    target_file_path = os.path.join(modules.globals.target_folder_path, target_file)
+                elif modules.globals.target_path:
+                    target_file_path = modules.globals.target_path
+                else:
+                    update_status("Error: No target files..", frame_processor.NAME)
+                    print("Error: No target files..")
+                    return
                 if (has_image_extension(source_file) or has_video_extension(source_file)) and (has_image_extension(target_file_path) or has_video_extension(target_file_path)):
                     output_file_name = f"{os.path.splitext(source_file)[0]}_{os.path.basename(target_file_path)}"
                     output_file_path = os.path.join(output_subfolder_path, output_file_name)
-                    print(output_file_path)
+                  
                     try:
-                        shutil.copy(os.path.join(modules.globals.target_folder_path, target_file), output_file_path)
+                        if modules.globals.target_folder_path:
+                            pwd = os.path.join(modules.globals.target_folder_path, target_file)
+                        else:
+                            pwd = modules.globals.target_path
+                        shutil.copy(pwd, output_file_path)
                     except Exception as e:
                         print(f"Error copying file {target_file}: {e}")
                     output_files.append(output_file_path)
             
             # Process
-            modules.globals.source_path = f"{modules.globals.source_folder_path}/{source_file}"
-            
+            if modules.globals.source_folder_path:
+                modules.globals.source_path = f"{modules.globals.source_folder_path}/{source_file}"
+            else:
+                modules.globals.source_path = f"{source_file}"
+               
+            print(modules.globals.source_path)
             for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
                 if not frame_processor.pre_start():
                     return
