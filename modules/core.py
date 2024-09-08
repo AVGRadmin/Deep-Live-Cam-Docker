@@ -250,10 +250,6 @@ def start() -> None:
                     target_file_path = os.path.join(modules.globals.target_folder_path, target_file)
                 elif modules.globals.target_path:
                     target_file_path = modules.globals.target_path
-                else:
-                    update_status("Error: No target files..", frame_processor.NAME)
-                    print("Error: No target files..")
-                    return
                 if (has_image_extension(source_file) or has_video_extension(source_file)) and (has_image_extension(target_file_path) or has_video_extension(target_file_path)):
                     output_file_name = f"{os.path.splitext(source_file)[0]}_{os.path.basename(target_file_path)}"
                     output_file_path = os.path.join(output_subfolder_path, output_file_name)
