@@ -11,69 +11,70 @@ Users of this software are expected to use this software responsibly while abidi
 
 ## How do I install it?
 ### Docker
-#### Overview
-This project sets up the environment for running the Deep-Live-Cam, a deep learning-based live video processing tool. The provided `Makefile`, `docker-compose.yml`, and `docker_script.sh` are designed to streamline the setup process, ensuring that the correct versions of the models are downloaded and that the Docker container is properly configured.
+Deprecated / No longer maintained in this repo. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
+#### ~~Overview~~
+~~This project sets up the environment for running the Deep-Live-Cam, a deep learning-based live video processing tool. The provided `Makefile`, `docker-compose.yml`, and `docker_script.sh` are designed to streamline the setup process, ~~ensuring that the correct versions of the models are downloaded and that the Docker container is properly configured.
 
-#### Prerequisites
-Before you start, ensure that the following are installed on your system:
+#### ~~Prerequisites
+~~Before you start, ensure that the following are installed on your system:~~
 
-- Docker (with NVIDIA GPU support)
-- Docker Compose
-- CUDA Toolkit (version 12.2) **NOTE** I am using 12.2 for "personal" reasons, but this is not officially supported by the maintainers.
-- Git
-#### Setup Instructions
-##### 1. Download and Set Up Models
+~~- Docker (with NVIDIA GPU support)~~
+~~- Docker Compose~~
+~~- CUDA Toolkit (version 12.2) **NOTE** I am using 12.2 for "personal" reasons, but this is not officially supported by the maintainers.~~
+~~- Git~~
+~~#### Setup Instructions~~
+##### 1. Download and Set Up Models~~
 
-The `Makefile` is used to download the necessary models and set up the environment. These models are specifically chosen to work with the current setup.
+~~The `Makefile` is used to download the necessary models and set up the environment. These models are specifically chosen to work with the current setup.~~
 
-###### Steps:
-- Clone the repository and navigate to the project directory.
-- Run the following command to initialize the environment and download the models: ``` make ``` This will:
-    - Create the required directories.
-    - Clone a pre-configured model repository from `Hugging Face`.
-    - Move the models to the correct directory.
+###### ~~Steps:~~
+~~- Clone the repository and navigate to the project directory.~~
+~~- Run the following command to initialize the environment and download the models: ``` make ``` This will:~~
+    ~~- Create the required directories.~~
+    ~~- Clone a pre-configured model repository from `Hugging Face`.~~
+    ~~- Move the models to the correct directory.~~
 
-##### Build Docker Image
+##### ~~Build Docker Image~~
 
-If needed, you can build the Docker image specified in the `docker-compose.yml`. This is useful if you need to customize the image.
+~~If needed, you can build the Docker image specified in the `docker-compose.yml`. This is useful if you need to customize the image.~~
 
-###### Steps:
+###### ~~Steps:~~
 
-- Run the following command to build the Docker image: ``` make build ```
-##### Running the Application
+~~- Run the following command to build the Docker image: ``` make build ```~~
+##### ~~Running the Application~~
 
-The `docker-compose.yml` file is configured to use the GPU and includes volume mappings for models and output directories. The `docker_script.sh` handles the processing of input files.
+~~The `docker-compose.yml` file is configured to use the GPU and includes volume mappings for models and output directories. The `docker_script.sh` handles the processing of input files.~~
 
-###### Steps:
+###### ~~Steps:~~
 
-Start the application using Docker Compose: ``` make run ``` This command runs the Deep-Live-Cam service inside a Docker container.
-##### Processing Files
+~~Start the application using Docker Compose: ``` make run ``` This command runs the Deep-Live-Cam service inside a Docker container.~~
+~~##### Processing Files~~
 
-The `docker_script.sh` script processes images or videos by swapping faces and optionally enhancing them. It will take files from the `source_files` and `target_files` directories, process them, and save the output in the `output_files` directory.
+~~The `docker_script.sh` script processes images or videos by swapping faces and optionally enhancing them. It will take files from the `source_files` and `target_files` directories, process them, and save the output in the `output_files` directory.~~
 
-###### Steps:
+###### ~~Steps:~~
 
-Place your source files (e.g., images to swap faces on) in the `output/source_files` directory.
-Place your target files (e.g., images or videos to apply the faces onto) in the `output/target_files` directory.
-The script automatically processes each pair of source and target files.
-The processed output will be saved in `output/output_files`, and the enhanced version will be saved in `output/enhanced_files`.
+~~Place your source files (e.g., images to swap faces on) in the `output/source_files` directory.~~
+~~Place your target files (e.g., images or videos to apply the faces onto) in the `output/target_files` directory.~~
+~~The script automatically processes each pair of source and target files.~~
+~~The processed output will be saved in `output/output_files`, and the enhanced version will be saved in `output/enhanced_files`.~~
 
-##### Cleaning Up
+##### ~~Cleaning Up~~
 
-You can clean up the generated files and models if needed.
+~~You can clean up the generated files and models if needed.~~
 
-###### Steps:
+###### ~~Steps:~~
 
-Run the following command to clean up the models and output files: ``` make clean-all ```
-To only clean up the models, use: ``` make clean ```
+~~Run the following command to clean up the models and output files: ``` make clean-all ```~~
+~~To only clean up the models, use: ``` make clean ```~~
 
-#### Notes
-- If you encounter issues with the downloaded models, consider downloading them manually from the official sources and placing them in the appropriate directories.
-- You can customize the Docker and processing configurations by modifying the `docker-compose.yml` and `docker_script.sh` files.
-Troubleshooting
-- Ensure that your NVIDIA drivers and CUDA installation are up to date.
-- If Docker fails to access the GPU, verify that the `nvidia-docker` runtime is correctly installed.
-- For more details on model sources and the project, refer to the [Deep-Live-Cam](https://github.com/hacksider/Deep-Live-Cam/issues) repository.
+#### ~~ Notes~~
+~~- If you encounter issues with the downloaded models, consider downloading them manually from the official sources and placing them in the appropriate directories.~~
+~~- You can customize the Docker and processing configurations by modifying the `docker-compose.yml` and `docker_script.sh` files.~~
+#### ~~Troubleshooting~~
+~~- Ensure that your NVIDIA drivers and CUDA installation are up to date.~~
+~~- If Docker fails to access the GPU, verify that the `nvidia-docker` runtime is correctly installed.~~
+~~- For more details on model sources and the project, refer to the [Deep-Live-Cam](https://github.com/hacksider/Deep-Live-Cam/issues) repository.~~
 
 
 
