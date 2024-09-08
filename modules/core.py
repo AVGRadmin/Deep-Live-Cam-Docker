@@ -266,6 +266,7 @@ def start() -> None:
                 # process image to image
             for target_file in output_files:
                 modules.globals.target_path = target_file
+                modules.globals.output_path = target_file
                 if has_image_extension(modules.globals.target_path):
                     if modules.globals.nsfw_filter and ui.check_and_ignore_nsfw(modules.globals.target_path, destroy):
                         return
