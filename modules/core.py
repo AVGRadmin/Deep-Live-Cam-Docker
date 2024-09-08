@@ -281,10 +281,6 @@ def start() -> None:
                 if has_image_extension(modules.globals.target_path):
                     if modules.globals.nsfw_filter and ui.check_and_ignore_nsfw(modules.globals.target_path, destroy):
                         return
-                    try:
-                        shutil.copy2(modules.globals.target_path, modules.globals.output_path)
-                    except Exception as e:
-                        print("Error copying file:", str(e))
                     for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
                         update_status('Progressing...', frame_processor.NAME)
                         print('Progressing...', frame_processor.NAME)
