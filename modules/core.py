@@ -173,16 +173,6 @@ def update_status(message: str, scope: str = 'DLC.CORE') -> None:
     if not modules.globals.headless:
         ui.update_status(message)
 
-def start() -> None:
-    
-    
-    update_status('Processing...')
-    
-    if modules.globals.source_folder_path or modules.globals.target_folder_path:
-        handle_multiple_files()
-    else:
-        handle_single_files()
-
 def destroy(to_quit=True) -> None:
     if modules.globals.target_path:
         clean_temp(modules.globals.target_path)
@@ -204,6 +194,13 @@ def run() -> None:
         window.mainloop()
 
 
+def start() -> None:
+    update_status('Processing...')
+    if modules.globals.source_folder_path or modules.globals.target_folder_path:
+        handle_multiple_files()
+    else:
+        handle_single_files()
+        
 def handle_multiple_files():
         if os.path.isfile(modules.globals.output_path): 
             update_status('Error: Output target should not be a file when input is a folder(s).')
@@ -260,7 +257,7 @@ def handle_multiple_files():
                 update_status('Copying files...', frame_processor.NAME)
                 output_file = []  # Reset output frames for each source frame
                 for target_file in target_files:
-                    target_file = os.path.join(modules.globals.target_folder_path, target_file)
+                    target_file = os.path.join(modules.globals.target_folder_path, target)
 
                     if (has_image_extension(source_file) or has_video_extension(source_file)) and (has_image_extension(target) or has_video_extension(target)):
                         output_file_name = f"{os.path.splitext(source_file)[0]}_{os.path.basename(target)}"
