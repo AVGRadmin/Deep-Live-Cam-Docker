@@ -11,7 +11,7 @@ Users of this software are expected to use this software responsibly while abidi
 
 ## How do I install it?
 ### Docker
-Deprecated / No longer maintained in this repo. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
+All docker related commits and pushes will be undone in this repo. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
 
 ### Basic: It is more likely to work on your computer but it will also be very slow. You can follow instructions for the basic install (This usually runs via **CPU**)
 #### 1.Setup your platform
