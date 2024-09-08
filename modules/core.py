@@ -285,7 +285,7 @@ def handle_multiple_files():
                 return  
             
             
-            output_frames = []
+            output_file = []
             
             
             # Process
@@ -302,7 +302,7 @@ def handle_multiple_files():
 
                     # Create files to modify
                     update_status('Copying files...', frame_processor.NAME)
-                    output_frames = []  # Reset output frames for each source frame
+                    output_file = []  # Reset output frames for each source frame
                     for target in target_frames:
                         target = os.path.join(modules.globals.target_folder_path, target)
 
@@ -311,14 +311,14 @@ def handle_multiple_files():
                             output_file_path = os.path.join(output_subfolder_path, output_file_name)
 
                             shutil.copy(target, output_file_path)
-                            output_frames.append(output_file_path)
+                            output_file.append(output_file_path)
 
                     # Process
                     modules.globals.source_path = f"{modules.globals.source_folder_path}/{source_file}"
                     for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
                         if not frame_processor.pre_start():
                             return
-                    frame_processor.process_target_folder(modules.globals.source_path, output_frames)
+                    frame_processor.process_target_folder(modules.globals.source_path, output_file)
             else:
                 
                 #Create files to modify
@@ -328,7 +328,7 @@ def handle_multiple_files():
                         output_file_name = os.path.splitext(os.path.basename(modules.globals.source_path)[0])+os.path.basename(target)
                         output_file_path = os.path.join(modules.globals.output_path ,output_file_name)
                         shutil.copy(target,output_file_path)
-                        output_frames.append(output_file_path)
+                        output_file.append(output_file_path)
                     # output_frames = next(os.walk(modules.globals.target_folder_path), (None, None, []))[2] 
                
                 # Process
@@ -336,7 +336,7 @@ def handle_multiple_files():
                     if not frame_processor.pre_start():
                         return
                 
-                frame_processor.process_target_folder(modules.globals.source_path, output_frames) 
+                frame_processor.process_target_folder(modules.globals.source_path, output_file) 
             release_resources()
             print("We are done! I dont know if we did it, but i am done. You do the debugging!")
         return
