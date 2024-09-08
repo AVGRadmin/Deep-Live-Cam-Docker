@@ -272,13 +272,18 @@ def handle_multiple_files():
             # Check what type of target frame we have
             if modules.globals.target_folder_path:
                 target_frames = next(os.walk(modules.globals.target_folder_path), (None, None, []))[2] 
-            else:
-                if modules.globals.target_path:
+            elif modules.globals.target_path: 
+                if os.path.isfile:
                     target_frames.append(modules.globals.target_path)
                 else:
-                    update_status('Error: No input target defined..')
-                    print('Error: No input target defined..')
-                    return  
+                    update_status('Error: Input target not a valid file or directory..')
+                    print('Error: Input target not a valid file or directory..')
+                    return 
+            else:
+                update_status('Error: No input target defined..')
+                print('Error: No input target defined..')
+                return  
+            
             
             output_frames = []
             
