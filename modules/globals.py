@@ -11,6 +11,8 @@ file_types = [
 
 source_folder_path = None
 target_folder_path = None
+use_source_folder = None    # New toggle selection batch processing 
+use_target_folder = None    # New toggle selection batch processing
 source_path = None
 target_path = None
 output_path = None

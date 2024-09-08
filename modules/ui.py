@@ -43,7 +43,6 @@ def init(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.CTk:
 
     return ROOT
 
-
 def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.CTk:
     global source_label, target_label, status_label
 
@@ -63,6 +62,7 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     target_label = ctk.CTkLabel(root, text=None)
     target_label.place(relx=0.6, rely=0.1, relwidth=0.3, relheight=0.25)
 
+
     select_face_button = ctk.CTkButton(root, text='Select a face', cursor='hand2', command=lambda: select_source_path())
     select_face_button.place(relx=0.1, rely=0.4, relwidth=0.3, relheight=0.1)
 
@@ -72,35 +72,37 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     select_target_button = ctk.CTkButton(root, text='Select a target', cursor='hand2', command=lambda: select_target_path())
     select_target_button.place(relx=0.6, rely=0.4, relwidth=0.3, relheight=0.1)
 
+    use_folder_as_source = ctk.BooleanVar(value=modules.globals.use_source_folder)
+    use_folder_as_source_switch = ctk.CTkSwitch(root, text='Use folder as source', variable=use_folder_as_source, cursor='hand2', command=lambda: toggle_source_mode(use_folder_as_source.get()))
+    use_folder_as_source_switch.place(relx=0.6, rely=0.55)
+
+    use_folder_as_target = ctk.BooleanVar(value=modules.globals.use_target_folder)
+    use_folder_as_target_switch = ctk.CTkSwitch(root, text='Use folder as target', variable=use_folder_as_target, cursor='hand2', command=lambda: toggle_target_mode(use_folder_as_target.get()))
+    use_folder_as_target_switch.place(relx=0.6, rely=0.6)
+
     keep_fps_value = ctk.BooleanVar(value=modules.globals.keep_fps)
     keep_fps_checkbox = ctk.CTkSwitch(root, text='Keep fps', variable=keep_fps_value, cursor='hand2', command=lambda: setattr(modules.globals, 'keep_fps', not modules.globals.keep_fps))
-    keep_fps_checkbox.place(relx=0.1, rely=0.6)
+    keep_fps_checkbox.place(relx=0.1, rely=0.55)
 
     keep_frames_value = ctk.BooleanVar(value=modules.globals.keep_frames)
     keep_frames_switch = ctk.CTkSwitch(root, text='Keep frames', variable=keep_frames_value, cursor='hand2', command=lambda: setattr(modules.globals, 'keep_frames', keep_frames_value.get()))
-    keep_frames_switch.place(relx=0.1, rely=0.65)
+    keep_frames_switch.place(relx=0.1, rely=0.6)
 
-    # for FRAME PROCESSOR ENHANCER tumbler:
     enhancer_value = ctk.BooleanVar(value=modules.globals.fp_ui['face_enhancer'])
-    enhancer_switch = ctk.CTkSwitch(root, text='Face Enhancer', variable=enhancer_value, cursor='hand2', command=lambda: update_tumbler('face_enhancer',enhancer_value.get()))
-    enhancer_switch.place(relx=0.1, rely=0.7)
+    enhancer_switch = ctk.CTkSwitch(root, text='Face Enhancer', variable=enhancer_value, cursor='hand2', command=lambda: update_tumbler('face_enhancer', enhancer_value.get()))
+    enhancer_switch.place(relx=0.1, rely=0.65)
 
     keep_audio_value = ctk.BooleanVar(value=modules.globals.keep_audio)
     keep_audio_switch = ctk.CTkSwitch(root, text='Keep audio', variable=keep_audio_value, cursor='hand2', command=lambda: setattr(modules.globals, 'keep_audio', keep_audio_value.get()))
-    keep_audio_switch.place(relx=0.6, rely=0.6)
+    keep_audio_switch.place(relx=0.6, rely=0.65)
 
     many_faces_value = ctk.BooleanVar(value=modules.globals.many_faces)
     many_faces_switch = ctk.CTkSwitch(root, text='Many faces', variable=many_faces_value, cursor='hand2', command=lambda: setattr(modules.globals, 'many_faces', many_faces_value.get()))
-    many_faces_switch.place(relx=0.6, rely=0.65)
+    many_faces_switch.place(relx=0.6, rely=0.7)
 
-    # Add color correction toggle button
     color_correction_value = ctk.BooleanVar(value=modules.globals.color_correction)
     color_correction_switch = ctk.CTkSwitch(root, text='Fix Blueish Cam\n(force cv2 to use RGB instead of BGR)', variable=color_correction_value, cursor='hand2', command=lambda: setattr(modules.globals, 'color_correction', color_correction_value.get()))
-    color_correction_switch.place(relx=0.6, rely=0.70)
-
-#    nsfw_value = ctk.BooleanVar(value=modules.globals.nsfw_filter)
-#    nsfw_switch = ctk.CTkSwitch(root, text='NSFW filter', variable=nsfw_value, cursor='hand2', command=lambda: setattr(modules.globals, 'nsfw_filter', nsfw_value.get()))
-#    nsfw_switch.place(relx=0.6, rely=0.7)
+    color_correction_switch.place(relx=0.6, rely=0.75)
 
     start_button = ctk.CTkButton(root, text='Start', cursor='hand2', command=lambda: select_output_path(start))
     start_button.place(relx=0.15, rely=0.80, relwidth=0.2, relheight=0.05)
@@ -153,19 +155,25 @@ def update_tumbler(var: str, value: bool) -> None:
 
 
 def select_source_path() -> None:
-    global RECENT_DIRECTORY_SOURCE, img_ft, vid_ft
+    global RECENT_DIRECTORY_SOURCE, img_ft
 
     PREVIEW.withdraw()
-    source_path = ctk.filedialog.askopenfilename(title='select an source image', initialdir=RECENT_DIRECTORY_SOURCE, filetypes=[img_ft])
-    if is_image(source_path):
-        modules.globals.source_path = source_path
-        RECENT_DIRECTORY_SOURCE = os.path.dirname(modules.globals.source_path)
-        image = render_image_preview(modules.globals.source_path, (200, 200))
-        source_label.configure(image=image)
+    if modules.globals.use_source_folder:
+        folder_path = ctk.filedialog.askdirectory(title='Select a source folder', initialdir=RECENT_DIRECTORY_SOURCE)
+        if folder_path:
+            modules.globals.source_folder_path = folder_path
+            RECENT_DIRECTORY_SOURCE = folder_path
+            # Update UI accordingly, if needed
     else:
-        modules.globals.source_path = None
-        source_label.configure(image=None)
-
+        source_path = ctk.filedialog.askopenfilename(title='Select a source image', initialdir=RECENT_DIRECTORY_SOURCE, filetypes=[img_ft])
+        if is_image(source_path):
+            modules.globals.source_path = source_path
+            RECENT_DIRECTORY_SOURCE = os.path.dirname(source_path)
+            image = render_image_preview(source_path, (200, 200))
+            source_label.configure(image=image)
+        else:
+            modules.globals.source_path = None
+            source_label.configure(image=None)
 
 def swap_faces_paths() -> None:
     global RECENT_DIRECTORY_SOURCE, RECENT_DIRECTORY_TARGET
@@ -195,36 +203,66 @@ def select_target_path() -> None:
     global RECENT_DIRECTORY_TARGET, img_ft, vid_ft
 
     PREVIEW.withdraw()
-    target_path = ctk.filedialog.askopenfilename(title='select an target image or video', initialdir=RECENT_DIRECTORY_TARGET, filetypes=[img_ft, vid_ft])
-    if is_image(target_path):
-        modules.globals.target_path = target_path
-        RECENT_DIRECTORY_TARGET = os.path.dirname(modules.globals.target_path)
-        image = render_image_preview(modules.globals.target_path, (200, 200))
-        target_label.configure(image=image)
-    elif is_video(target_path):
-        modules.globals.target_path = target_path
-        RECENT_DIRECTORY_TARGET = os.path.dirname(modules.globals.target_path)
-        video_frame = render_video_preview(target_path, (200, 200))
-        target_label.configure(image=video_frame)
+    if modules.globals.use_target_folder:
+        folder_path = ctk.filedialog.askdirectory(title='Select a target folder', initialdir=RECENT_DIRECTORY_TARGET)
+        if folder_path:
+            modules.globals.target_folder_path = folder_path
+            RECENT_DIRECTORY_TARGET = folder_path
     else:
-        modules.globals.target_path = None
-        target_label.configure(image=None)
-
+        target_path = ctk.filedialog.askopenfilename(title='Select a target image or video', initialdir=RECENT_DIRECTORY_TARGET, filetypes=[img_ft, vid_ft])
+        if is_image(target_path):
+            modules.globals.target_path = target_path
+            RECENT_DIRECTORY_TARGET = os.path.dirname(target_path)
+            image = render_image_preview(target_path, (200, 200))
+            target_label.configure(image=image)
+        elif is_video(target_path):
+            modules.globals.target_path = target_path
+            RECENT_DIRECTORY_TARGET = os.path.dirname(target_path)
+            video_frame = render_video_preview(target_path, (200, 200))
+            target_label.configure(image=video_frame)
+        else:
+            modules.globals.target_path = None
+            target_label.configure(image=None)
 
 def select_output_path(start: Callable[[], None]) -> None:
     global RECENT_DIRECTORY_OUTPUT, img_ft, vid_ft
 
-    if is_image(modules.globals.target_path):
-        output_path = ctk.filedialog.asksaveasfilename(title='save image output file', filetypes=[img_ft], defaultextension='.png', initialfile='output.png', initialdir=RECENT_DIRECTORY_OUTPUT)
+    # Withdraw the preview window if it's open
+    PREVIEW.withdraw()
+    output_path = None
+    if modules.globals.use_target_folder or modules.globals.use_source_folder:
+        output_path = ctk.filedialog.askdirectory(title='Select a output folder', initialdir=RECENT_DIRECTORY_TARGET)
+    elif is_image(modules.globals.target_path):
+        output_path = ctk.filedialog.asksaveasfilename(title='Save image output file', filetypes=[img_ft], defaultextension='.png', initialfile='output.png', initialdir=RECENT_DIRECTORY_OUTPUT)
     elif is_video(modules.globals.target_path):
-        output_path = ctk.filedialog.asksaveasfilename(title='save video output file', filetypes=[vid_ft], defaultextension='.mp4', initialfile='output.mp4', initialdir=RECENT_DIRECTORY_OUTPUT)
+        output_path = ctk.filedialog.asksaveasfilename(title='Save video output file', filetypes=[vid_ft], defaultextension='.mp4', initialfile='output.mp4', initialdir=RECENT_DIRECTORY_OUTPUT)
     else:
-        output_path = None
+        print("No target selected.")
     if output_path:
         modules.globals.output_path = output_path
-        RECENT_DIRECTORY_OUTPUT = os.path.dirname(modules.globals.output_path)
+        RECENT_DIRECTORY_OUTPUT = os.path.dirname(output_path)
         start()
+    else:
+        update_status("Output file not saved.")
 
+
+def toggle_source_mode(use_folder: bool) -> None:
+    modules.globals.use_source_folder = use_folder
+    if use_folder:
+        modules.globals.source_path = None
+        source_label.configure(image=None)
+    else:
+        modules.globals.source_folder_path = None
+        source_label.configure(image=None)
+
+def toggle_target_mode(use_folder: bool) -> None:
+    modules.globals.use_target_folder = use_folder
+    if use_folder:
+        modules.globals.target_path = None
+        target_label.configure(image=None)
+    else:
+        modules.globals.target_folder_path = None
+        target_label.configure(image=None)
 
 def check_and_ignore_nsfw(target, destroy: Callable = None) -> bool:
     ''' Check if the target is NSFW.
