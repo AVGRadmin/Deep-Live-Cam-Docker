@@ -179,7 +179,7 @@ def start() -> None:
     update_status('Processing...')
     
     if modules.globals.source_folder_path or modules.globals.target_folder_path:
-        handle_multiple_files
+        handle_multiple_files()
     else:
         for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
             if not frame_processor.pre_start():
