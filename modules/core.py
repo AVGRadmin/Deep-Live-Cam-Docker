@@ -196,10 +196,6 @@ def run() -> None:
 
 def start() -> None:
     update_status('Processing...')
-    if os.path.isfile(modules.globals.output_path): 
-        update_status('Error: Output target should not be a file when input is a folder(s).')
-        print('Error: Output target should not be a file when input is a folder(s).')
-        return
     if modules.globals.nsfw_filter and ui.check_and_ignore_nsfw(modules.globals.target_path, destroy):
         return
     for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
