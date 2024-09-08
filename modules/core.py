@@ -196,6 +196,7 @@ def run() -> None:
 
 def start() -> None:
     update_status('Processing...')
+    
     if modules.globals.nsfw_filter and ui.check_and_ignore_nsfw(modules.globals.target_path, destroy):
         return
     for frame_processor in get_frame_processors_modules(modules.globals.frame_processors):
@@ -239,9 +240,15 @@ def start() -> None:
             if not ((has_image_extension(source_file) or has_video_extension(source_file))):
                 continue
             # Create a dedicated output folder for each source frame
-            output_subfolder_name = os.path.splitext(source_file)[0]  # Use the frame name without extension as the folder name
-            output_subfolder_path = os.path.join(modules.globals.output_path, output_subfolder_name)
-            os.makedirs(output_subfolder_path, exist_ok=True)
+            if len(source_files) > 1:
+                output_subfolder_name = None
+                output_subfolder_path = None
+                output_subfolder_name = os.path.splitext(source_file)[0]  # Use the frame name without extension as the folder name
+                output_subfolder_path = os.path.join(modules.globals.output_path, output_subfolder_name)
+                os.makedirs(output_subfolder_path, exist_ok=True)
+            else:
+                output_subfolder_path = None
+            
             # Create files to modify
             update_status('Copying files...', frame_processor.NAME)
             output_files = []  # Reset output frames for each source frame
@@ -252,8 +259,10 @@ def start() -> None:
                     target_file_path = modules.globals.target_path
                 if (has_image_extension(source_file) or has_video_extension(source_file)) and (has_image_extension(target_file_path) or has_video_extension(target_file_path)):
                     output_file_name = f"{os.path.splitext(source_file)[0]}_{os.path.basename(target_file_path)}"
-                    output_file_path = os.path.join(output_subfolder_path, output_file_name)
-                  
+                    if output_subfolder_path:
+                        output_file_path = os.path.join(output_subfolder_path, output_file_name)
+                    else:
+                        output_file_path = modules.globals.output_path # os.path.join(output_subfolder_path, output_file_name)
                     try:
                         if modules.globals.target_folder_path:
                             pwd = os.path.join(modules.globals.target_folder_path, target_file)
@@ -329,3 +338,4 @@ def start() -> None:
                     update_status('Processing to video succeed!')
                 else:
                     update_status('Processing to video failed!')
+        
