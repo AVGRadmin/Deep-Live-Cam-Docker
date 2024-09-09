@@ -26,6 +26,7 @@ Languages is new and barely tested. Expect bugs with it.
 - Portuguese
 - Russian
 </details>
+
 Note: I do not speak these extra languages personally, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam) repo. 
 Mr.GPT helped me with the translation for these languages.
 
