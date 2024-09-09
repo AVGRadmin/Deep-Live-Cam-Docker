@@ -34,4 +34,6 @@ class UI:
         self.SELECT_OUTPUT_FILES = 'Выберите выходное изображение или видео'
         self.SELECT_OUTPUT_FOLDER = 'Выберите папку для вывода'
         self.ALL_FILES = 'Все файлы'
+        self.IMG_FILES='Image'
+        self.VIDEO_FILES='Video'
         self.LANGUAGE_BUTTON = 'язык'
