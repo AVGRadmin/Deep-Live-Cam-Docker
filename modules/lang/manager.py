@@ -14,7 +14,7 @@ class LanguageManager:
             'korean': 'modules.lang.korean',
             'polish': 'modules.lang.polish',
             'turkish': 'modules.lang.turkish',
-            'chinese_simplified': 'modules.lang.chinese_simplified',
+            'chinesesimplified': 'modules.lang.chinese_simplified',
             'japanese': 'modules.lang.japanese',
             'portuguese': 'modules.lang.portuguese',
             'russian': 'modules.lang.russian',

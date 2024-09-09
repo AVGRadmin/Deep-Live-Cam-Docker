@@ -10,7 +10,7 @@ class UI:
         self.USE_FOLDER_AS_SOURCE = '将文件夹用作源'
         self.USE_FOLDER_AS_TARGET = '将文件夹用作目标'
         self.KEEP_FPS = '保持FPS'
-        self.KEEP_FRAMES = '保持帧'
+        self.KEEP_FRAMES = '保留镜框'
         self.FACE_ENHANCER = '面部增强器'
         self.KEEP_AUDIO = '保持音频'
         self.MANY_FACES = '多个面部'
