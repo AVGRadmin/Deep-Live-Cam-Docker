@@ -53,6 +53,9 @@ available_languages = [
 language_manager = LanguageManager()
 Lang = language_manager.get_language()
 
+vid_ft = [('*.mp4;*.mov')]
+img_ft = [('*.png;*.jpg;*.jpeg')]
+
 def init(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.CTk:
     global ROOT, PREVIEW
     ROOT = create_root(start, destroy)
