@@ -1,7 +1,7 @@
 import os
 import webbrowser
 import customtkinter as ctk
-from typing import Callable
+from typing import Callable, Tuple
 import cv2
 from PIL import Image, ImageOps
 import tkinter as tk
@@ -11,7 +11,8 @@ from modules.face_analyser import get_one_face
 from modules.capturer import get_video_frame
 from modules.processors.frame.core import get_frame_processors_modules
 from modules.lang.manager import LanguageManager
-from modules.utilities import resolve_relative_path
+from modules.utilities import resolve_relative_path, is_image, is_video
+
 ROOT = None
 ROOT_HEIGHT = 700
 ROOT_WIDTH = 600
@@ -46,14 +47,13 @@ color_correction_switch = None
 change_language_button=None
 
 
-# lmuage vars
+# Language vars
 lang_dialog_open=None
 language_manager = LanguageManager()
 lm = language_manager.get_language()
 
-vid_ft = [('*.mp4;*.mov')]
-img_ft = [('*.png;*.jpg;*.jpeg')]
-
+vid_ft = [(lm.VIDEO_FILES, '*.mp4 *.mov')]
+img_ft = [(lm.IMG_FILES, '*.png *.jpg *.jpeg')]
 def init(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.CTk:
     global ROOT, PREVIEW
     ROOT = create_root(start, destroy)
@@ -79,10 +79,10 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     root.grid_rowconfigure([0, 1, 2, 3, 4, 5, 6, 7, 8], weight=1)
     root.grid_columnconfigure([0, 1, 2, 3], weight=1)
 
-    source_label = ctk.CTkLabel(root, text=None, text_color='white', font=('Helvetica', 12))
+    source_label = ctk.CTkLabel(root, text=lm.SELECT_A_FACE, text_color='#000000', font=('Helvetica', 12))
     source_label.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
-    target_label = ctk.CTkLabel(root, text=None, text_color='white', font=('Helvetica', 12))
+    target_label = ctk.CTkLabel(root, text=lm.SELECT_A_TARGET, text_color='#000000', font=('Helvetica', 12))
     target_label.grid(row=0, column=2, padx=10, pady=10, sticky='nsew')
 
     select_face_button = ctk.CTkButton(root, text=lm.SELECT_A_FACE, cursor='hand2', command=select_source_path)
@@ -142,8 +142,6 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
 
     return root
 
-
-
 def create_preview(parent: ctk.CTk) -> ctk.CTkToplevel:
     preview = ctk.CTkToplevel(parent)
     preview.title(lm.PREVIEW_TITLE)
@@ -163,28 +161,30 @@ def update_ui_elements():
     global use_folder_as_source_switch, use_folder_as_target_switch, keep_fps_checkbox, keep_frames_switch, enhancer_switch
     global keep_audio_switch, many_faces_switch, color_correction_switch, lm, change_language_button
 
-    # Update text labels
+    # Labels
     source_label.configure(text=lm.SELECT_A_FACE)
     target_label.configure(text=lm.SELECT_A_TARGET)
     status_label.configure(text=lm.STATUS_LABEL)
     donate_label.configure(text=lm.DONATE)
 
+    # Buttons
     start_button.configure(text=lm.START_PROCESS)
     stop_button.configure(text=lm.STOP_PROCESS)
     preview_button.configure(text=lm.PREVIEW)
     live_button.configure(text=lm.LIVE)
-
+    change_language_button.configure(text=lm.LANGUAGE_BUTTON)
+    
+    # Switches
     use_folder_as_source_switch.configure(text=lm.USE_FOLDER_AS_SOURCE)
     use_folder_as_target_switch.configure(text=lm.USE_FOLDER_AS_TARGET)
-    keep_fps_checkbox.configure(text=lm.KEEP_FPS)
     keep_frames_switch.configure(text=lm.KEEP_FRAMES)
     enhancer_switch.configure(text=lm.FACE_ENHANCER)
     keep_audio_switch.configure(text=lm.KEEP_AUDIO)
     many_faces_switch.configure(text=lm.MANY_FACES)
     color_correction_switch.configure(text=lm.COLOR_CORRECTION)
-
-    change_language_button.configure(text=lm.CHANGE_LANGUAGE)
-
+    
+    # Checkboxes
+    keep_fps_checkbox.configure(text=lm.KEEP_FPS)
 
 def update_status(text: str) -> None:
     status_label.configure(text=text)
@@ -192,7 +192,6 @@ def update_status(text: str) -> None:
 
 def update_tumbler(var: str, value: bool) -> None:
     modules.globals.fp_ui[var] = value
-
 
 def select_source_path() -> None:
     global PREVIEW, RECENT_DIRECTORY_SOURCE, img_ft
@@ -206,13 +205,16 @@ def select_source_path() -> None:
             modules.globals.source_folder_path = folder_path
             RECENT_DIRECTORY_SOURCE = folder_path
     else:
-        file_path = ctk.filedialog.askopenfilename(filetypes=[(lm.IMG_FILES, img_ft), (lm.ALL_FILES, '*.*')], title=lm.IMG_FILES, initialdir=RECENT_DIRECTORY_SOURCE)
+        file_path = ctk.filedialog.askopenfilename(filetypes=img_ft, title=lm.SELECT_A_FACE, initialdir=RECENT_DIRECTORY_SOURCE)
         if file_path:
-            modules.globals.source_file_path = file_path
+            modules.globals.source_path = file_path
             RECENT_DIRECTORY_SOURCE = os.path.dirname(file_path)
+            # Display thumbnail
+            image = render_image_preview(file_path, (200, 200))
+            source_label.configure(image=image)
 
 def select_target_path() -> None:
-    global RECENT_DIRECTORY_TARGET, vid_ft
+    global RECENT_DIRECTORY_TARGET,img_ft, vid_ft
 
     if PREVIEW:  # Check if PREVIEW is not None before trying to withdraw
         PREVIEW.withdraw()
@@ -223,18 +225,37 @@ def select_target_path() -> None:
             modules.globals.target_folder_path = folder_path
             RECENT_DIRECTORY_TARGET = folder_path
     else:
-        file_path = ctk.filedialog.askopenfilename(filetypes=[(lm.MP4_FILES, vid_ft), (lm.ALL_FILES, '*.*')], title=lm.SELECT_TARGET_FILES, initialdir=RECENT_DIRECTORY_TARGET)
+        file_path = ctk.filedialog.askopenfilename(filetypes=img_ft+vid_ft, title=lm.SELECT_A_TARGET, initialdir=RECENT_DIRECTORY_TARGET)
         if file_path:
-            modules.globals.target_file_path = file_path
+            modules.globals.target_path = file_path
             RECENT_DIRECTORY_TARGET = os.path.dirname(file_path)
+            # Display thumbnail
+            if is_image(file_path):
+                image = render_image_preview(file_path, (200, 200))
+                target_label.configure(image=image)
+            elif is_video(file_path):
+                video_frame = render_video_preview(file_path, (200, 200))
+                target_label.configure(image=video_frame)
 
 
 def select_output_path(start: Callable[[], None]) -> None:
     global RECENT_DIRECTORY_OUTPUT
+
     if modules.globals.use_source_folder or modules.globals.use_target_folder:
         file_path = ctk.filedialog.askdirectory(title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
     else:  
-        file_path = ctk.filedialog.asksaveasfilename(filetypes=[(lm.MP4_FILES, vid_ft), (lm.ALL_FILES, '*.*')], title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_OUTPUT)
+        valid = False
+        if is_image(modules.globals.target_path):
+            file_path = ctk.filedialog.asksaveasfilename(filetypes=img_ft, title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_OUTPUT)
+            valid = True
+        if is_video(modules.globals.target_path):
+            file_path = ctk.filedialog.asksaveasfilename(filetypes=vid_ft, title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_OUTPUT)
+            valid = True
+        
+        if not valid:
+            update_status("Error: No valid input target defined")
+            return
+
     if file_path:
         modules.globals.output_path = file_path
         RECENT_DIRECTORY_OUTPUT = os.path.dirname(file_path)
@@ -251,12 +272,10 @@ def toggle_preview() -> None:
     if PREVIEW is None:
         PREVIEW = create_preview(ROOT)
     else:
-        print(PREVIEW.state())
         if PREVIEW.state() == 'withdrawn':
             PREVIEW.deiconify()
         else:
             PREVIEW.withdraw()
-
 
 def webcam_preview() -> None:
     global PREVIEW
@@ -271,7 +290,6 @@ def webcam_preview() -> None:
         preview_label.configure(image=ImageOps.fit(image, (PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT)))
         ROOT.update()
     video_capture.release()
-
 
 def update_preview(frame_number: int = 0) -> None:
     if modules.globals.source_path and modules.globals.target_path:
@@ -290,14 +308,13 @@ def update_preview(frame_number: int = 0) -> None:
         update_status('Processing succeed!')
         PREVIEW.deiconify()
 
-
 def swap_faces_paths() -> None:
-    source_path = modules.globals.source_file_path
-    target_path = modules.globals.target_file_path
-    modules.globals.source_file_path = target_path
-    modules.globals.target_file_path = source_path
-    source_label.configure(text=os.path.basename(modules.globals.source_file_path))
-    target_label.configure(text=os.path.basename(modules.globals.target_file_path))
+    source_path = modules.globals.source_path
+    target_path = modules.globals.target_path
+    modules.globals.source_path = target_path
+    modules.globals.target_path = source_path
+    source_label.configure(text=os.path.basename(modules.globals.source_path))
+    target_label.configure(text=os.path.basename(modules.globals.target_path))
     
 def change_language() -> None:
     global language_manager, lm, lang_dialog_open
@@ -323,7 +340,7 @@ def change_language() -> None:
         dialog.destroy()
 
     dialog = ctk.CTkToplevel(ROOT)
-    dialog.title("Select lmuage")
+    dialog.title("Select language")
     dialog.protocol("WM_DELETE_WINDOW", close_dialog)  
 
     language_var = tk.StringVar(value=lm)
@@ -344,14 +361,14 @@ def update_ui_texts() -> None:
     target_label.configure(text=lm.SELECT_A_TARGET)
     donate_label.configure(text=lm.DONATE)
     start_button.configure(text=lm.START_PROCESS)
-    stop_button.configure(text=lm.DESTROY)
+    stop_button.configure(text=lm.STOP_PROCESS)
     preview_button.configure(text=lm.PREVIEW)
     live_button.configure(text=lm.LIVE)
     
     use_folder_as_source_switch.configure(text=lm.USE_FOLDER_AS_SOURCE)
     use_folder_as_target_switch.configure(text=lm.USE_FOLDER_AS_TARGET)
     keep_fps_checkbox.configure(text=lm.KEEP_FPS)
-    keep_frames_switch.configure(text=lm.KEEP_FRAMES )
+    keep_frames_switch.configure(text=lm.KEEP_FRAMES)
     enhancer_switch.configure(text=lm.FACE_ENHANCER)
     keep_audio_switch.configure(text=lm.KEEP_AUDIO)
     many_faces_switch.configure(text=lm.MANY_FACES)
@@ -362,3 +379,20 @@ def close_preview(preview: ctk.CTkToplevel):
     preview.destroy()
     global PREVIEW
     PREVIEW = None
+
+def render_image_preview(image_path: str, size: Tuple[int, int]) -> ctk.CTkImage:
+    image = Image.open(image_path)
+    image = ImageOps.fit(image, size, Image.LANCZOS)
+    return ctk.CTkImage(image, size=image.size)
+
+def render_video_preview(video_path: str, size: Tuple[int, int], frame_number: int = 0) -> ctk.CTkImage:
+    capture = cv2.VideoCapture(video_path)
+    if frame_number:
+        capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+    has_frame, frame = capture.read()
+    if has_frame:
+        image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        image = ImageOps.fit(image, size, Image.LANCZOS)
+        return ctk.CTkImage(image, size=image.size)
+    capture.release()
+    cv2.destroyAllWindows()

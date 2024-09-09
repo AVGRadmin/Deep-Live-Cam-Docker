@@ -292,7 +292,8 @@ def process_with_frame_processors(output_files, frame_processor):
         
         folder_names=output_file.split("/")
         source=folder_names[len(folder_names)-2]
-        modules.globals.target_path=os.path.join(modules.globals.target_folder_path, folder_names[len(folder_names)-1].replace(source+"_",""))
+        if not modules.globals.target_path: 
+            modules.globals.target_path=os.path.join(modules.globals.target_folder_path, folder_names[len(folder_names)-1].replace(source+"_",""))
      
         modules.globals.output_path = output_file
 
