@@ -343,12 +343,19 @@ def change_language() -> None:
 
     def on_select_language():
         selected_language = language_var.get()
+        changed=False
         if selected_language in language_manager.available_languages:
             language_manager.set_language(selected_language.lower())
             global lm
             lm = language_manager.get_language()
-            update_ui_texts()
-        close_dialog()
+            try:
+                update_ui_texts()
+                changed=True
+            except Exception:
+                changed=False
+                update_status("Not supported!")
+        if changed:
+            close_dialog()
 
     def close_dialog():
         nonlocal dialog
