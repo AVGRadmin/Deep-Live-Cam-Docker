@@ -11,6 +11,10 @@ Users of this software are expected to use this software responsibly while abidi
 
 ## Issues 
 Known issues will bee added in my overhead repo for this fork. See docker section below.
+
+## Languages (New)
+Languages is new and barely tested. Expect bugs with it.
+
 ## How do I install it?
 ### Docker
 Using docker directly inside this repo is deprecated. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
