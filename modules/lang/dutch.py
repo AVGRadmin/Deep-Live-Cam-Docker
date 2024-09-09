@@ -1,5 +1,6 @@
 class UI:
     def __init__(self):
+        self.PREVIEW_TITLE = 'Voorvertoning'
         self.SELECT_A_FACE = 'Selecteer een gezicht'
         self.SELECT_A_TARGET = 'Selecteer een doel'
         self.START_PROCESS = 'Start verwerking'
@@ -33,3 +34,4 @@ class UI:
         self.SELECT_OUTPUT_FILES = 'Selecteer een uitvoerafbeelding of -video'
         self.SELECT_OUTPUT_FOLDER = 'Selecteer een uitvoermap'
         self.ALL_FILES = 'Alle bestanden'
+        self.LANGUAGE_BUTTON = 'Taal'

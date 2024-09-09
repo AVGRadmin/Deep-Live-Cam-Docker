@@ -1,5 +1,6 @@
 class UI:
     def __init__(self):
+        self.PREVIEW_TITLE = 'Предварительный просмотр'
         self.SELECT_A_FACE = 'Выберите лицо'
         self.SELECT_A_TARGET = 'Выберите цель'
         self.START_PROCESS = 'Начать обработку'
@@ -33,3 +34,4 @@ class UI:
         self.SELECT_OUTPUT_FILES = 'Выберите выходное изображение или видео'
         self.SELECT_OUTPUT_FOLDER = 'Выберите папку для вывода'
         self.ALL_FILES = 'Все файлы'
+        self.LANGUAGE_BUTTON = 'язык'

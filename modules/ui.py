@@ -129,7 +129,7 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     live_button = ctk.CTkButton(root, text=Lang.LIVE, cursor='hand2', command=webcam_preview)
     live_button.grid(row=5, column=3, padx=10, pady=10, sticky='ew')
 
-    change_language_button = ctk.CTkButton(root, text="Lang", cursor='hand2', command=change_language)
+    change_language_button = ctk.CTkButton(root, text=Lang.LANGUAGE_BUTTON, cursor='hand2', command=change_language)
     change_language_button.grid(row=6, column=3, padx=10, pady=10, sticky='ew')
 
     status_label = ctk.CTkLabel(root, text=None, justify='center', text_color='#000000', font=('Helvetica', 12))
@@ -163,8 +163,12 @@ def update_ui_elements():
     global keep_audio_switch, many_faces_switch, color_correction_switch, Lang, change_language_button
 
     # Update text labels
-    source_label.configure(text=Lang.SOURCE_LABEL)
-    target_label.configure(text=Lang.TARGET_LABEL)
+    
+    
+    
+    
+    source_label.configure(text=Lang.SELECT_A_FACE)
+    target_label.configure(text=Lang.SELECT_A_TARGET)
     status_label.configure(text=Lang.STATUS_LABEL)
     donate_label.configure(text=Lang.DONATE)
 
@@ -321,16 +325,26 @@ def update_ui_texts() -> None:
     Lang = language_manager.get_language()
 
     # Update text for all labels and buttons
+    status_label.configure(text='Switched language!')
     source_label.configure(text=Lang.SELECT_A_FACE)
     target_label.configure(text=Lang.SELECT_A_TARGET)
-    status_label.configure(text='Switched language!')
     donate_label.configure(text=Lang.DONATE)
     start_button.configure(text=Lang.START_PROCESS)
     stop_button.configure(text=Lang.DESTROY)
     preview_button.configure(text=Lang.PREVIEW)
     live_button.configure(text=Lang.LIVE)
+    
+    use_folder_as_source_switch.configure(text=Lang.USE_FOLDER_AS_SOURCE)
+    use_folder_as_target_switch.configure(text=Lang.USE_FOLDER_AS_TARGET)
+    keep_fps_checkbox.configure(text=Lang.KEEP_FPS)
+    keep_frames_switch.configure(text=Lang.KEEP_FRAMES )
+    enhancer_switch.configure(text=Lang.FACE_ENHANCER)
+    keep_audio_switch.configure(text=Lang.KEEP_AUDIO)
+    many_faces_switch.configure(text=Lang.MANY_FACES)
+    color_correction_switch.configure(text=Lang.COLOR_CORRECTION)
+    change_language_button.configure(text=Lang.LANGUAGE_BUTTON)
         # Update text for switches and other elements
-def update_ui_texts() -> None:
+def update_ui_textss() -> None:
     global source_label, target_label, status_label, donate_label, start_button, stop_button, preview_button, live_button, Lang
     global use_folder_as_source_switch, use_folder_as_target_switch, keep_fps_checkbox, keep_frames_switch, enhancer_switch, keep_audio_switch, many_faces_switch, color_correction_switch
     
