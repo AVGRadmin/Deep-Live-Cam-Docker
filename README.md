@@ -14,12 +14,20 @@ Known issues will bee added in my overhead repo for this fork. See docker sectio
 
 ## Languages (New)
 Languages is new and barely tested. Expect bugs with it.
-### Supporded (Mostly)
-* English
-* Dutch
-* Arabic
-
-Note: I am not Arabic or Dutch speaking myself, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam) repo.
+<details>
+  <summary>Supported languages</summary>
+  
+- English
+- Spanish
+- French
+- Arabic
+- Dutch
+- German
+- Portuguese
+- Russian
+</details>
+Note: I do not speak these extra languages personally, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam) repo. 
+Mr.GPT helped me with the translation for these languages.
 
 Want to add your own language here? Just fill in the default English form below with your own language and post it as an issue over at the [overhead](https://github.com/AVGRadmin/DeepLiveCam/issues) repo!
 <details>
