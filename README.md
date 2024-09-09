@@ -13,6 +13,15 @@ Users of this software are expected to use this software responsibly while abidi
 Known issues will bee added in my overhead repo for this fork. See docker section below.
 
 ## Languages (New)
+
+<details>
+  <summary>Spoiler</summary>
+
+
+https://github.com/user-attachments/assets/70a1fa77-9865-4192-b751-4d4afe0f1a8b
+
+
+</details>
 Languages is new and barely tested. Expect bugs with it.
 <details>
   <summary>Supported languages</summary>
