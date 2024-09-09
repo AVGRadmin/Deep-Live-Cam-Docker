@@ -30,7 +30,7 @@ Languages is new and barely tested. Expect bugs with it.
 Note: I do not speak these extra languages personally, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam) repo. 
 Mr.GPT helped me with the translation for these languages.
 
-Want to add your own language here? Just fill in the default [English](https://github.com/AVGRadmin/Deep-Live-Cam-Docker/blob/main/modules/lang/english.py) form below with your own language and post it as an issue over at the [overhead](https://github.com/AVGRadmin/DeepLiveCam/issues) repo!
+Want to add your own language here? Just fill in the default [English](https://github.com/AVGRadmin/Deep-Live-Cam-Docker/blob/main/modules/lang/english.py) form with your own language and post it as an issue over at the [overhead](https://github.com/AVGRadmin/DeepLiveCam/issues) repo!
 
 
 ## How do I install it?
