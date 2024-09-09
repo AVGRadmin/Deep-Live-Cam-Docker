@@ -9,7 +9,7 @@ class LanguageManager:
             'german': 'modules.lang.german',
             'arabic': 'modules.lang.arabic',
             'dutch': 'modules.lang.dutch',
-            'hindi': 'modules.lang.hindi',
+            'portuguese': 'modules.lang.portuguese',
             'russian': 'modules.lang.russian'
         }
         self.current_language = 'english'
