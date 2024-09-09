@@ -14,6 +14,12 @@ Known issues will bee added in my overhead repo for this fork. See docker sectio
 
 ## Languages (New)
 Languages is new and barely tested. Expect bugs with it.
+### Supporded (Mostly)
+* English
+* Dutch
+* Arabic
+
+Note: I am not Arabic or Dutch speaking myself, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam)
 
 ## How do I install it?
 ### Docker
