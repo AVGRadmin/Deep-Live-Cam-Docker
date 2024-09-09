@@ -277,9 +277,8 @@ def change_language() -> None:
 
     # Define available languages
     available_languages = [
-        'English', 'Spanish', 'French', 'Arabic', 'Dutch', 'Italian',
-        'Korean', 'Polish', 'Turkish', 'German', 'Japanese',
-        'Portuguese', 'Russian', 'Swedish'
+        'English', 'Spanish', 'French', 'Arabic', 'Dutch', 'German',
+        'Portuguese', 'Russian'
     ]  # Example languages
 
     def on_select_language():

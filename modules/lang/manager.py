@@ -10,15 +10,7 @@ class LanguageManager:
             'arabic': 'modules.lang.arabic',
             'dutch': 'modules.lang.dutch',
             'hindi': 'modules.lang.hindi',
-            'italian': 'modules.lang.italian',
-            'korean': 'modules.lang.korean',
-            'polish': 'modules.lang.polish',
-            'turkish': 'modules.lang.turkish',
-            'chinesesimplified': 'modules.lang.chinese_simplified',
-            'japanese': 'modules.lang.japanese',
-            'portuguese': 'modules.lang.portuguese',
-            'russian': 'modules.lang.russian',
-            'swedish': 'modules.lang.swedish'
+            'russian': 'modules.lang.russian'
         }
         self.current_language = 'english'
         self.load_language(self.current_language)
