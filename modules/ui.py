@@ -322,7 +322,7 @@ def change_language() -> None:
     def on_select_language():
         selected_language = language_var.get()
         changed=False
-        if selected_language in language_manager.available_languages:
+        if selected_language in language_manager.language_modules:
             language_manager.set_language(selected_language.lower())
             global lm
             lm = language_manager.get_language()
@@ -347,7 +347,7 @@ def change_language() -> None:
 
     language_var = tk.StringVar(value=lm)
     tk.Label(dialog, text="Choose a language:").pack(padx=10, pady=10)
-    for lang in language_manager.available_languages:
+    for lang in language_manager.language_modules:
         tk.Radiobutton(dialog, text=lang, variable=language_var, value=lang).pack(anchor='w', padx=10)
     tk.Button(dialog, text="OK", command=on_select_language).pack(pady=10)
 
