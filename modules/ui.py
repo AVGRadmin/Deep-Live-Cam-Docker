@@ -5,6 +5,9 @@ from typing import Callable, Tuple
 import cv2
 from PIL import Image, ImageOps
 import tkinter as tk
+from PIL import Image, ImageOps
+from customtkinter import CTkImage
+
 import modules.globals
 import modules.metadata
 from modules.face_analyser import get_one_face
@@ -280,6 +283,13 @@ def toggle_preview() -> None:
 def webcam_preview() -> None:
     global PREVIEW
 
+    if PREVIEW is None:
+        PREVIEW = create_preview(ROOT)
+    else:
+        if PREVIEW.state() == 'withdrawn':
+            PREVIEW.deiconify()
+        else:
+            PREVIEW.withdraw()
     PREVIEW.withdraw()
     video_capture = cv2.VideoCapture(0)
     while True:
@@ -287,7 +297,14 @@ def webcam_preview() -> None:
         if not ret:
             break
         image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        preview_label.configure(image=ImageOps.fit(image, (PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT)))
+        image = ImageOps.fit(image, (PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT))
+        
+         # Convert PIL image to PhotoImage
+        tk_image = CTkImage(light_image=image, size=(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT))
+
+        # Update the preview label with the PhotoImage
+        preview_label.configure(image=tk_image)
+        preview_label.image = tk_image 
         ROOT.update()
     video_capture.release()
 
