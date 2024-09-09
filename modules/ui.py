@@ -48,7 +48,8 @@ keep_audio_switch = None
 many_faces_switch = None
 color_correction_switch = None
 change_language_button=None
-
+select_face_button=None
+select_target_button=None
 
 # Language vars
 lang_dialog_open=None
@@ -67,7 +68,7 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     global start_button, stop_button, preview_button, live_button
     global use_folder_as_source_switch, use_folder_as_target_switch, keep_fps_checkbox
     global keep_frames_switch, enhancer_switch, keep_audio_switch, many_faces_switch
-    global color_correction_switch, change_language_button
+    global color_correction_switch, change_language_button, select_face_button, select_target_button
 
     ctk.deactivate_automatic_dpi_awareness()
     ctk.set_appearance_mode('system')
@@ -82,19 +83,19 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     root.grid_rowconfigure([0, 1, 2, 3, 4, 5, 6, 7, 8], weight=1)
     root.grid_columnconfigure([0, 1, 2, 3], weight=1)
 
-    source_label = ctk.CTkLabel(root, text=lm.SELECT_A_FACE, text_color='#000000', font=('Helvetica', 12))
+    source_label = ctk.CTkLabel(root, text=lm.SELECT_SOURCE_IMAGE, text_color='#000000', font=('Helvetica', 12))
     source_label.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
-    target_label = ctk.CTkLabel(root, text=lm.SELECT_A_TARGET, text_color='#000000', font=('Helvetica', 12))
+    target_label = ctk.CTkLabel(root, text=lm.SELECT_TARGET_IMGVID, text_color='#000000', font=('Helvetica', 12))
     target_label.grid(row=0, column=2, padx=10, pady=10, sticky='nsew')
 
-    select_face_button = ctk.CTkButton(root, text=lm.SELECT_A_FACE, cursor='hand2', command=select_source_path)
+    select_face_button = ctk.CTkButton(root, text=lm.SELECT_DIALOG_SOURCE, cursor='hand2', command=select_source_path)
     select_face_button.grid(row=1, column=0, padx=10, pady=5, sticky='ew')
 
     swap_faces_button = ctk.CTkButton(root, text='↔', cursor='hand2', command=swap_faces_paths)
     swap_faces_button.grid(row=1, column=1, padx=10, pady=5, sticky='ew')
 
-    select_target_button = ctk.CTkButton(root, text=lm.SELECT_A_TARGET, cursor='hand2', command=select_target_path)
+    select_target_button = ctk.CTkButton(root, text=lm.SELECT_DIALOG_TARGET, cursor='hand2', command=select_target_path)
     select_target_button.grid(row=1, column=2, padx=10, pady=5, sticky='ew')
 
     use_folder_as_source_switch = ctk.CTkSwitch(root, text=lm.USE_FOLDER_AS_SOURCE, command=lambda: toggle_source_mode(use_folder_as_source_switch.get()))
@@ -156,7 +157,7 @@ def create_preview(parent: ctk.CTk) -> ctk.CTkToplevel:
     global preview_label
     preview_label = ctk.CTkLabel(preview)
     preview_label.grid(row=0, column=0, sticky='nsew')
-
+    preview_label.configure(text="")
     return preview
 
 def update_ui_elements():
@@ -164,30 +165,7 @@ def update_ui_elements():
     global use_folder_as_source_switch, use_folder_as_target_switch, keep_fps_checkbox, keep_frames_switch, enhancer_switch
     global keep_audio_switch, many_faces_switch, color_correction_switch, lm, change_language_button
 
-    # Labels
-    source_label.configure(text=lm.SELECT_A_FACE)
-    target_label.configure(text=lm.SELECT_A_TARGET)
-    status_label.configure(text=lm.STATUS_LABEL)
-    donate_label.configure(text=lm.DONATE)
-
-    # Buttons
-    start_button.configure(text=lm.START_PROCESS)
-    stop_button.configure(text=lm.STOP_PROCESS)
-    preview_button.configure(text=lm.PREVIEW)
-    live_button.configure(text=lm.LIVE)
-    change_language_button.configure(text=lm.LANGUAGE_BUTTON)
-    
-    # Switches
-    use_folder_as_source_switch.configure(text=lm.USE_FOLDER_AS_SOURCE)
-    use_folder_as_target_switch.configure(text=lm.USE_FOLDER_AS_TARGET)
-    keep_frames_switch.configure(text=lm.KEEP_FRAMES)
-    enhancer_switch.configure(text=lm.FACE_ENHANCER)
-    keep_audio_switch.configure(text=lm.KEEP_AUDIO)
-    many_faces_switch.configure(text=lm.MANY_FACES)
-    color_correction_switch.configure(text=lm.COLOR_CORRECTION)
-    
-    # Checkboxes
-    keep_fps_checkbox.configure(text=lm.KEEP_FPS)
+    update_ui_texts()
 
 def update_status(text: str) -> None:
     status_label.configure(text=text)
@@ -203,12 +181,12 @@ def select_source_path() -> None:
         PREVIEW.withdraw()
 
     if modules.globals.use_source_folder:
-        folder_path = ctk.filedialog.askdirectory(title=lm.SELECT_SOURCE_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
+        folder_path = ctk.filedialog.askdirectory(title=lm.SELECT_DIALOG_SOURCE_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
         if folder_path:
             modules.globals.source_folder_path = folder_path
             RECENT_DIRECTORY_SOURCE = folder_path
     else:
-        file_path = ctk.filedialog.askopenfilename(filetypes=img_ft, title=lm.SELECT_A_FACE, initialdir=RECENT_DIRECTORY_SOURCE)
+        file_path = ctk.filedialog.askopenfilename(filetypes=img_ft, title=lm.SELECT_DIALOG_SOURCE, initialdir=RECENT_DIRECTORY_SOURCE)
         if file_path:
             modules.globals.source_path = file_path
             RECENT_DIRECTORY_SOURCE = os.path.dirname(file_path)
@@ -223,12 +201,12 @@ def select_target_path() -> None:
         PREVIEW.withdraw()
 
     if modules.globals.use_target_folder:
-        folder_path = ctk.filedialog.askdirectory(title=lm.SELECT_TARGET_FOLDER, initialdir=RECENT_DIRECTORY_TARGET)
+        folder_path = ctk.filedialog.askdirectory(title=lm.SELECT_DIALOG_TARGET_FOLDER, initialdir=RECENT_DIRECTORY_TARGET)
         if folder_path:
             modules.globals.target_folder_path = folder_path
             RECENT_DIRECTORY_TARGET = folder_path
     else:
-        file_path = ctk.filedialog.askopenfilename(filetypes=img_ft+vid_ft, title=lm.SELECT_A_TARGET, initialdir=RECENT_DIRECTORY_TARGET)
+        file_path = ctk.filedialog.askopenfilename(filetypes=img_ft+vid_ft, title=lm.SELECT_DIALOG_TARGET, initialdir=RECENT_DIRECTORY_TARGET)
         if file_path:
             modules.globals.target_path = file_path
             RECENT_DIRECTORY_TARGET = os.path.dirname(file_path)
@@ -245,14 +223,14 @@ def select_output_path(start: Callable[[], None]) -> None:
     global RECENT_DIRECTORY_OUTPUT
 
     if modules.globals.use_source_folder or modules.globals.use_target_folder:
-        file_path = ctk.filedialog.askdirectory(title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
+        file_path = ctk.filedialog.askdirectory(title=lm.SELECT_DIALOG_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
     else:  
         valid = False
         if is_image(modules.globals.target_path):
-            file_path = ctk.filedialog.asksaveasfilename(filetypes=img_ft, title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_OUTPUT)
+            file_path = ctk.filedialog.asksaveasfilename(filetypes=img_ft, title=lm.SELECT_DIALOG_OUTPUT_FILE, initialdir=RECENT_DIRECTORY_OUTPUT)
             valid = True
         if is_video(modules.globals.target_path):
-            file_path = ctk.filedialog.asksaveasfilename(filetypes=vid_ft, title=lm.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_OUTPUT)
+            file_path = ctk.filedialog.asksaveasfilename(filetypes=vid_ft, title=lm.SELECT_DIALOG_OUTPUT_FILE, initialdir=RECENT_DIRECTORY_OUTPUT)
             valid = True
         
         if not valid:
@@ -374,30 +352,36 @@ def change_language() -> None:
     tk.Button(dialog, text="OK", command=on_select_language).pack(pady=10)
 
 def update_ui_texts() -> None:
-    global source_label, target_label, status_label, donate_label, start_button, stop_button, preview_button, live_button, lm
+    global source_label, target_label, status_label, donate_label, start_button, stop_button, preview_button, live_button, select_face_button, select_target_button, lm
     
     # Ensure lm is updated to reflect the new language
     lm = language_manager.get_language()
 
-    # Update text for all labels and buttons
-    status_label.configure(text='Switched language!')
-    source_label.configure(text=lm.SELECT_A_FACE)
-    target_label.configure(text=lm.SELECT_A_TARGET)
+    # Labels
+    source_label.configure(text=lm.SELECT_DIALOG_SOURCE)
+    target_label.configure(text=lm.SELECT_DIALOG_TARGET)
+    status_label.configure(text=lm.STATUS_LABEL)
     donate_label.configure(text=lm.DONATE)
+
+    # Buttons
     start_button.configure(text=lm.START_PROCESS)
     stop_button.configure(text=lm.STOP_PROCESS)
     preview_button.configure(text=lm.PREVIEW)
     live_button.configure(text=lm.LIVE)
-    
+    change_language_button.configure(text=lm.LANGUAGE_BUTTON)
+    select_face_button.configure(text=lm.SELECT_DIALOG_SOURCE)
+    select_target_button.configure(text=lm.SELECT_DIALOG_TARGET)
+    # Switches
     use_folder_as_source_switch.configure(text=lm.USE_FOLDER_AS_SOURCE)
     use_folder_as_target_switch.configure(text=lm.USE_FOLDER_AS_TARGET)
-    keep_fps_checkbox.configure(text=lm.KEEP_FPS)
     keep_frames_switch.configure(text=lm.KEEP_FRAMES)
     enhancer_switch.configure(text=lm.FACE_ENHANCER)
     keep_audio_switch.configure(text=lm.KEEP_AUDIO)
     many_faces_switch.configure(text=lm.MANY_FACES)
     color_correction_switch.configure(text=lm.COLOR_CORRECTION)
-    change_language_button.configure(text=lm.LANGUAGE_BUTTON)
+    
+    # Checkboxes
+    keep_fps_checkbox.configure(text=lm.KEEP_FPS)
 
 def close_preview(preview: ctk.CTkToplevel):
     preview.destroy()
