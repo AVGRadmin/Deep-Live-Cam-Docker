@@ -49,6 +49,11 @@ color_correction_switch=None
 
 img_ft, vid_ft = modules.globals.file_types
 
+# Language
+available_languages = [
+        'English', 'Spanish', 'French', 'Arabic', 'Dutch', 'German',
+        'Portuguese', 'Russian'
+    ] 
 language_manager = LanguageManager()  # Initialize the language manager
 Lang=language_manager.get_language()
 
@@ -273,13 +278,10 @@ def swap_faces_paths() -> None:
     target_label.configure(text=os.path.basename(modules.globals.target_file_path))
 import tkinter as tk
 def change_language() -> None:
-    global language_manager, Lang
+    global language_manager, Lang, available_languages
 
     # Define available languages
-    available_languages = [
-        'English', 'Spanish', 'French', 'Arabic', 'Dutch', 'German',
-        'Portuguese', 'Russian'
-    ]  # Example languages
+     
 
     def on_select_language():
         selected_language = language_var.get()
