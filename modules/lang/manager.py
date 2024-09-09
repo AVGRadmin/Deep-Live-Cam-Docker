@@ -1,18 +1,14 @@
 import importlib
 
+
+
 class LanguageManager:
     def __init__(self):
-        self.languages = {
-            'english': 'modules.lang.english',
-            'french': 'modules.lang.french',
-            'spanish': 'modules.lang.spanish',
-            'german': 'modules.lang.german',
-            'arabic': 'modules.lang.arabic',
-            'dutch': 'modules.lang.dutch',
-            'portuguese': 'modules.lang.portuguese',
-            'russian': 'modules.lang.russian'
-        }
-        self.current_language = 'english'
+        self.available_languages = ['English', 'Spanish', 'French', 'Arabic', 'Dutch', 'German','Portuguese', 'Russian']
+        self.languages = {}
+        for lang in self.available_languages:
+            self.languages[lang.lower()] = f'modules.lang.{lang.lower()}'
+        self.current_language = self.available_languages[0].lower() # Default to first
         self.load_language(self.current_language)
 
     def load_language(self, language_name):
