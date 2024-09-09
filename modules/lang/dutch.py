@@ -34,4 +34,7 @@ class UI:
         self.SELECT_OUTPUT_FILES = 'Selecteer een uitvoerafbeelding of -video'
         self.SELECT_OUTPUT_FOLDER = 'Selecteer een uitvoermap'
         self.ALL_FILES = 'Alle bestanden'
+        self.IMG_FILES='Image Files'
+        self.MP4_FILES='MP4 Files'
+        self.MOV_FILES='MOV Files'
         self.LANGUAGE_BUTTON = 'Taal'

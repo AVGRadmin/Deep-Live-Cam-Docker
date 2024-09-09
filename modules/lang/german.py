@@ -34,4 +34,7 @@ class UI:
         self.SELECT_OUTPUT_FILES = 'Wählen Sie eine Ausgabedatei (Bild oder Video)'
         self.SELECT_OUTPUT_FOLDER = 'Ausgabeordner auswählen'
         self.ALL_FILES = 'Alle Dateien'
+        self.IMG_FILES='Image Files'
+        self.MP4_FILES='MP4 Files'
+        self.MOV_FILES='MOV Files'
         self.LANGUAGE_BUTTON = 'Sprache'

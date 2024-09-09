@@ -34,4 +34,7 @@ class UI:
         self.SELECT_OUTPUT_FILES = 'اختر صورة أو فيديو إخراج'
         self.SELECT_OUTPUT_FOLDER = 'اختر مجلد إخراج'
         self.ALL_FILES = 'جميع الملفات'
+        self.IMG_FILES='Image Files'
+        self.MP4_FILES='MP4 Files'
+        self.MOV_FILES='MOV Files'
         self.LANGUAGE_BUTTON = 'لغة'

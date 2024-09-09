@@ -33,5 +33,7 @@ class UI:
         self.SELECT_TARGET_FOLDER='Select a target folder'
         self.SELECT_OUTPUT_FILES='Select a output image or video'
         self.SELECT_OUTPUT_FOLDER='Select a output folder'
-        self.ALL_FILES='All Files'
+        self.ALL_FILES='All'
+        self.IMG_FILES='Image'
+        self.MP4_FILES='Video'
         self.LANGUAGE_BUTTON = 'Language'
