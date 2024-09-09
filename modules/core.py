@@ -27,6 +27,7 @@ if 'ROCMExecutionProvider' in modules.globals.execution_providers:
 warnings.filterwarnings('ignore', category=FutureWarning, module='insightface')
 warnings.filterwarnings('ignore', category=UserWarning, module='torchvision')
 
+original_output_path=None #Todo: Implement into global variables in modules.globals
 
 def parse_args() -> None:
     signal.signal(signal.SIGINT, lambda signal_number, frame: destroy())
@@ -195,6 +196,7 @@ def run() -> None:
 
 
 def start() -> None:
+    global original_output_path
     update_status('Processing...')
 
     if modules.globals.nsfw_filter and ui.check_and_ignore_nsfw(modules.globals.target_path, destroy):
