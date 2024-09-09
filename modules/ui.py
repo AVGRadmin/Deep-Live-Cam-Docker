@@ -4,7 +4,7 @@ import customtkinter as ctk
 from typing import Callable
 import cv2
 from PIL import Image, ImageOps
-
+import tkinter as tk
 import modules.globals
 import modules.metadata
 from modules.face_analyser import get_one_face
@@ -17,7 +17,7 @@ ROOT_HEIGHT = 700
 ROOT_WIDTH = 600
 
 PREVIEW = None
-PREVIEW_MAX_HEIGHT = 700
+PREVIEW_MAX_HEIGHT = 700    
 PREVIEW_MAX_WIDTH  = 1200
 
 RECENT_DIRECTORY_SOURCE = None
@@ -35,7 +35,6 @@ start_button = None
 stop_button = None
 preview_button = None
 live_button = None
-
 use_folder_as_source_switch = None
 use_folder_as_target_switch = None
 keep_fps_checkbox = None
@@ -45,11 +44,10 @@ keep_audio_switch = None
 many_faces_switch = None
 color_correction_switch = None
 change_language_button=None
-# Language
-available_languages = [
-    'English', 'Spanish', 'French', 'Arabic', 'Dutch', 'German',
-    'Portuguese', 'Russian', 'Hindi'
-]
+
+
+# Language vars
+lang_dialog_open=None
 language_manager = LanguageManager()
 Lang = language_manager.get_language()
 
@@ -166,10 +164,6 @@ def update_ui_elements():
     global keep_audio_switch, many_faces_switch, color_correction_switch, Lang, change_language_button
 
     # Update text labels
-    
-    
-    
-    
     source_label.configure(text=Lang.SELECT_A_FACE)
     target_label.configure(text=Lang.SELECT_A_TARGET)
     status_label.configure(text=Lang.STATUS_LABEL)
@@ -199,47 +193,49 @@ def update_status(text: str) -> None:
 def update_tumbler(var: str, value: bool) -> None:
     modules.globals.fp_ui[var] = value
 
-def select_source_path() -> None:
-    global RECENT_DIRECTORY_SOURCE, img_ft
 
-    PREVIEW.withdraw()
+def select_source_path() -> None:
+    global PREVIEW, RECENT_DIRECTORY_SOURCE, img_ft
+
+    if PREVIEW:  # Check if PREVIEW is not None before trying to withdraw
+        PREVIEW.withdraw()
+
     if modules.globals.use_source_folder:
         folder_path = ctk.filedialog.askdirectory(title=Lang.SELECT_SOURCE_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
         if folder_path:
             modules.globals.source_folder_path = folder_path
             RECENT_DIRECTORY_SOURCE = folder_path
-            
     else:
-        file_path = ctk.filedialog.askopenfilename(filetypes=[(Lang.SELECT_SOURCE_FILES, img_ft), (Lang.ALL_FILES, '*.*')], title=Lang.SELECT_SOURCE_FOLDER, initialdir=RECENT_DIRECTORY_SOURCE)
+        file_path = ctk.filedialog.askopenfilename(filetypes=[(Lang.IMG_FILES, img_ft), (Lang.ALL_FILES, '*.*')], title=Lang.IMG_FILES, initialdir=RECENT_DIRECTORY_SOURCE)
         if file_path:
             modules.globals.source_file_path = file_path
             RECENT_DIRECTORY_SOURCE = os.path.dirname(file_path)
-            
 
 def select_target_path() -> None:
     global RECENT_DIRECTORY_TARGET, vid_ft
 
-    PREVIEW.withdraw()
+    if PREVIEW:  # Check if PREVIEW is not None before trying to withdraw
+        PREVIEW.withdraw()
+
     if modules.globals.use_target_folder:
         folder_path = ctk.filedialog.askdirectory(title=Lang.SELECT_TARGET_FOLDER, initialdir=RECENT_DIRECTORY_TARGET)
         if folder_path:
             modules.globals.target_folder_path = folder_path
             RECENT_DIRECTORY_TARGET = folder_path
-            
     else:
-        file_path = ctk.filedialog.askopenfilename(filetypes=[(Lang.SELECT_TARGET_FILES, vid_ft), (Lang.ALL_FILES, '*.*')], title=Lang.SELECT_TARGET_FOLDER, initialdir=RECENT_DIRECTORY_TARGET)
+        file_path = ctk.filedialog.askopenfilename(filetypes=[(Lang.MP4_FILES, vid_ft), (Lang.ALL_FILES, '*.*')], title=Lang.SELECT_TARGET_FILES, initialdir=RECENT_DIRECTORY_TARGET)
         if file_path:
             modules.globals.target_file_path = file_path
             RECENT_DIRECTORY_TARGET = os.path.dirname(file_path)
-            
+
 
 def select_output_path(start: Callable[[], None]) -> None:
     global RECENT_DIRECTORY_OUTPUT
 
-    output_path = ctk.filedialog.askopenfilename(filetypes=[(Lang.SELECT_OUTPUT_FILES, vid_ft), (Lang.ALL_FILES, '*.*')], title=Lang.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_TARGET)
-    if output_path:
-        modules.globals.output_file_path = output_path
-        RECENT_DIRECTORY_OUTPUT = os.path.dirname(output_path)
+    file_path = ctk.filedialog.asksaveasfilename(filetypes=[(Lang.MP4_FILES, vid_ft), (Lang.ALL_FILES, '*.*')], title=Lang.SELECT_OUTPUT_FOLDER, initialdir=RECENT_DIRECTORY_OUTPUT)
+    if file_path:
+        modules.globals.output_file_path = file_path
+        RECENT_DIRECTORY_OUTPUT = os.path.dirname(file_path)
         start()
 
 def toggle_source_mode(use_folder: bool) -> None:
@@ -300,24 +296,37 @@ def swap_faces_paths() -> None:
     modules.globals.target_file_path = source_path
     source_label.configure(text=os.path.basename(modules.globals.source_file_path))
     target_label.configure(text=os.path.basename(modules.globals.target_file_path))
-import tkinter as tk
+    
 def change_language() -> None:
-    global language_manager, Lang, available_languages
-    # Define available languages
+    global language_manager, Lang, lang_dialog_open
+    # Prevent opening another dialog if one is already open
+    if lang_dialog_open:
+        return
+
+    lang_dialog_open = True
+
     def on_select_language():
         selected_language = language_var.get()
-        if selected_language in available_languages:
+        if selected_language in language_manager.available_languages:
             language_manager.set_language(selected_language.lower())
             global Lang
-            Lang = language_manager.get_language()  # Update Lang with the new language
-            update_ui_texts()  # Refresh UI texts based on the new language
+            Lang = language_manager.get_language()
+            update_ui_texts()
+        close_dialog()
+
+    def close_dialog():
+        nonlocal dialog
+        global lang_dialog_open
+        lang_dialog_open = False
+        dialog.destroy()
 
     dialog = ctk.CTkToplevel(ROOT)
     dialog.title("Select Language")
+    dialog.protocol("WM_DELETE_WINDOW", close_dialog)  
 
-    language_var = tk.StringVar(value=Lang)  # Use the current language as default
+    language_var = tk.StringVar(value=Lang)
     tk.Label(dialog, text="Choose a language:").pack(padx=10, pady=10)
-    for lang in available_languages:
+    for lang in language_manager.available_languages:
         tk.Radiobutton(dialog, text=lang, variable=language_var, value=lang).pack(anchor='w', padx=10)
     tk.Button(dialog, text="OK", command=on_select_language).pack(pady=10)
 
@@ -346,33 +355,6 @@ def update_ui_texts() -> None:
     many_faces_switch.configure(text=Lang.MANY_FACES)
     color_correction_switch.configure(text=Lang.COLOR_CORRECTION)
     change_language_button.configure(text=Lang.LANGUAGE_BUTTON)
-        # Update text for switches and other elements
-def update_ui_textss() -> None:
-    global source_label, target_label, status_label, donate_label, start_button, stop_button, preview_button, live_button, Lang
-    global use_folder_as_source_switch, use_folder_as_target_switch, keep_fps_checkbox, keep_frames_switch, enhancer_switch, keep_audio_switch, many_faces_switch, color_correction_switch
-    
-    # Ensure Lang is updated to reflect the new language
-    Lang = language_manager.get_language()
-
-    # Update text for all labels and buttons
-    source_label.configure(text=Lang.SELECT_A_FACE)
-    target_label.configure(text=Lang.SELECT_A_TARGET)
-    status_label.configure(text='Switched language!')
-    donate_label.configure(text=Lang.DONATE)
-    start_button.configure(text=Lang.START_PROCESS)
-    stop_button.configure(text=Lang.DESTROY)
-    preview_button.configure(text=Lang.PREVIEW)
-    live_button.configure(text=Lang.LIVE)
-    
-    # Update text for switches and other elements
-    use_folder_as_source_switch.configure(text=getattr(Lang, 'USE_FOLDER_AS_SOURCE', "Use Folder as Source"))
-    use_folder_as_target_switch.configure(text=getattr(Lang, 'USE_FOLDER_AS_TARGET', "Use Folder as Target"))
-    keep_fps_checkbox.configure(text=getattr(Lang, 'KEEP_FPS', "Keep FPS"))
-    keep_frames_switch.configure(text=getattr(Lang, 'KEEP_FRAMES', "Keep Frames"))
-    enhancer_switch.configure(text=getattr(Lang, 'FACE_ENHANCER', "Face Enhancer"))
-    keep_audio_switch.configure(text=getattr(Lang, 'KEEP_AUDIO', "Keep Audio"))
-    many_faces_switch.configure(text=getattr(Lang, 'MANY_FACES', "Many Faces"))
-    color_correction_switch.configure(text=getattr(Lang, 'COLOR_CORRECTION', "Color Correction"))
 
 def close_preview(preview: ctk.CTkToplevel):
     preview.destroy()
