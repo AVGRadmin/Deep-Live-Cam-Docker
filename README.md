@@ -19,9 +19,7 @@ Languages is new and barely tested. Expect bugs with it.
 * Dutch
 * Arabic
 
-Note: I am not Arabic or Dutch speaking myself, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam)
-Add new langyage module as an issue in the OVERHEAD repo
-
+Note: I am not Arabic or Dutch speaking myself, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam) repo.
 
 Want to add your own language here? Just fill in the default English form below with your own language and post it as an issue over at the [overhead](https://github.com/AVGRadmin/DeepLiveCam/issues) repo!
 <details>
