@@ -31,47 +31,8 @@ Note: I do not speak these extra languages personally, so any input on changing 
 Mr.GPT helped me with the translation for these languages.
 
 Want to add your own language here? Just fill in the default English form below with your own language and post it as an issue over at the [overhead](https://github.com/AVGRadmin/DeepLiveCam/issues) repo!
-<details>
-  <summary>Default template</summary>
 
-```
-class UI:
-    def __init__(self):
-        self.SELECT_A_FACE = 'Select a face'
-        self.SELECT_A_TARGET = 'Select a target'
-        self.START_PROCESS = 'Start Processing'
-        self.STOP_PROCESS = 'Stop Processing'
-        self.PREVIEW = 'Preview'
-        self.LIVE = 'Live'
-        self.DESTROY = 'Destroy'
-        self.USE_FOLDER_AS_SOURCE = 'Use folder as source'
-        self.USE_FOLDER_AS_TARGET = 'Use folder as target'
-        self.KEEP_FPS = 'Keep FPS'
-        self.KEEP_FRAMES = 'Keep frames'
-        self.FACE_ENHANCER = 'Face Enhancer'
-        self.KEEP_AUDIO = 'Keep audio'
-        self.MANY_FACES = 'Many faces'
-        self.COLOR_CORRECTION = 'Fix Blueish Cam\n(force cv2 to use RGB instead of BGR)'
-        self.DONATE = 'Deep Live Cam'
-        self.OUTPUT_DIR = 'Select Output Directory'
-        self.SELECT_VIDEO = 'Select a video'
-        self.SELECT_IMAGE = 'Select an image'
-        self.SAVE_IMAGE = 'Save image output file'
-        self.SAVE_VIDEO = 'Save video output file'
-        self.OUTPUT_FILE = 'Select output file'
-        self.NO_TARGET = 'No target selected.'
-        self.PROCESSING_IGNORED = 'Processing ignored!'
-        self.PROCESSING_SUCCEED = 'Processing succeeded!'
-        self.NO_FILE_SELECTED = 'No file selected!'
-        self.SELECT_SOURCE_FILES='Select a source image or video'
-        self.SELECT_SOURCE_FOLDER='Select a source folder'
-        self.SELECT_TARGET_FILES='Select a target image or video'
-        self.SELECT_TARGET_FOLDER='Select a target folder'
-        self.SELECT_OUTPUT_FILES='Select a output image or video'
-        self.SELECT_OUTPUT_FOLDER='Select a output folder'
-        self.ALL_FILES='All Files'
-```
-</details>
+Use the [english](https://github.com/AVGRadmin/Deep-Live-Cam-Docker/blob/main/modules/lang/english.py) module as a default template and replce the english words with a translated version from your language.
 
 ## How do I install it?
 ### Docker
