@@ -42,6 +42,13 @@ Mr.GPT helped me with the translation for these languages.
 Want to add your own language here? Just fill in the default [English](https://github.com/AVGRadmin/Deep-Live-Cam-Docker/blob/main/modules/lang/english.py) form with your own language and post it as an issue over at the [overhead](https://github.com/AVGRadmin/DeepLiveCam/issues) repo!
 
 
+<details>
+  <summary>video example</summary>
+  
+https://github.com/user-attachments/assets/6975f688-08a1-4c33-9727-896e6d2c3c08
+
+</details>
+
 ## How do I install it?
 ### Docker
 Using docker directly inside this repo is deprecated. See [Overhead](https://github.com/AVGRadmin/DeepLiveCam) to use with docker.
