@@ -1,12 +1,15 @@
 import os
 from typing import List, Dict
+from modules.lang.manager import LanguageManager
+language_manager = LanguageManager()
+lm = language_manager.get_language()
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKFLOW_DIR = os.path.join(ROOT_DIR, 'workflow')
 
 file_types = [
-    ('Image', ('*.png','*.jpg','*.jpeg','*.gif','*.bmp')),
-    ('Video', ('*.mp4','*.mkv'))
+    (lm.IMAGE_FILETYPE_NAME, '*.png *.jpg *.jpeg *.gif *.bmp'),
+    (lm.VIDEO_FILETYPE_NAME, '*.mp4 *.mkv')
 ]
 
 source_folder_path = None
