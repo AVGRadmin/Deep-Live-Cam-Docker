@@ -27,13 +27,16 @@ Languages is new and barely tested. Expect bugs with it.
   <summary>Supported languages</summary>
   
 - English
-- Spanish
-- French
-- Arabic
-- Dutch
 - German
-- Portuguese
-- Russian
+- Arabic
+- ~~French~~
+- ~~Dutch~~
+- ~~Portuguese~~
+- ~~Spanish~~
+- ~~Russian~~
+
+Note: Some languages was removed to make development more convinient. They will be added if anyone requests it!
+
 </details>
 
 Note: I do not speak these extra languages personally, so any input on changing is welcome as a issue or fork of this [overhead](https://github.com/AVGRadmin/DeepLiveCam) repo. 
