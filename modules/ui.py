@@ -47,6 +47,7 @@ DEFAULT_BUTTON_HEIGHT = 40
 RECENT_DIRECTORY_SOURCE = None
 RECENT_DIRECTORY_TARGET = None
 RECENT_DIRECTORY_OUTPUT = None
+
 preview_label = None
 preview_slider = None
 source_label = None
@@ -61,6 +62,9 @@ lang_dialog_open=None
 # Language Management
 language_manager = LanguageManager()
 lm = language_manager.get_language()
+
+
+img_ft, vid_ft = modules.globals.file_types
 
 def init(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.CTk:
     global ROOT
@@ -369,6 +373,13 @@ def toggle_preview() -> None:
             PREVIEW.deiconify()
         else:
             PREVIEW.withdraw()
+            
+def create_label(topLVL: ctk.CTkToplevel) -> ctk.CTkLabel:
+    global preview_label
+    preview_label = ctk.CTkLabel(ctk.CTkToplevel(topLVL))
+    preview_label.grid(row=0, column=0, sticky='nsew')
+    preview_label.configure(text="")
+    return preview_label
 
 def create_preview(parent: ctk.CTk) -> ctk.CTkToplevel:
     preview = ctk.CTkToplevel(parent)
@@ -377,14 +388,10 @@ def create_preview(parent: ctk.CTk) -> ctk.CTkToplevel:
     preview.protocol('WM_DELETE_WINDOW', lambda: close_preview(preview))
     preview.grid_rowconfigure(0, weight=1)
     preview.grid_columnconfigure(0, weight=1)
-
-    global preview_label
-    preview_label = ctk.CTkLabel(preview)
-    preview_label.grid(row=0, column=0, sticky='nsew')
-    preview_label.configure(text="")
+    create_label(preview)
     return preview
 
-def webcam_preview() -> None:
+def webcam_preview_old() -> None:
     global PREVIEW
 
     if PREVIEW is None:
@@ -427,8 +434,20 @@ def update_preview(frame_number: int = 0) -> None:
         preview_label.configure(image=image)
         update_status('Processing succeed!')
         PREVIEW.deiconify()
+        
+def webcam_preview(root: ctk.CTk):
+    print("Open webcam")
+    if not modules.globals.map_faces:
+        if modules.globals.source_path is None:
+            # No image selected
+            return
+        
+        create_webcam_preview(root)
+    else:
+        modules.globals.souce_target_map = []
+        create_source_target_popup_for_webcam(root, modules.globals.souce_target_map)
 
-def webcam_preview():
+def create_webcam_preview(root: ctk.CTk):
     if modules.globals.source_path is None:
         # No image selected
         return
@@ -439,7 +458,9 @@ def webcam_preview():
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, PREVIEW_DEFAULT_WIDTH)     # Set the width of the resolution
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, PREVIEW_DEFAULT_HEIGHT)   # Set the height of the resolution
     camera.set(cv2.CAP_PROP_FPS, 60)                                # Set the frame rate of the webcam
-
+    if not preview_label:
+        PREVIEW=create_preview(root)
+        preview_label= create_label(PREVIEW)
     preview_label.configure(width=PREVIEW_DEFAULT_WIDTH, height=PREVIEW_DEFAULT_HEIGHT)  # Reset the preview image before startup
 
     PREVIEW.deiconify()  # Open preview window
@@ -481,6 +502,50 @@ def webcam_preview():
     camera.release()
     PREVIEW.withdraw()  # Close preview window when loop is finished
 
+
+def fit_image_to_size(image, width: int, height: int):
+    if width is None and height is None:
+      return image
+    h, w, _ = image.shape
+    ratio_h = 0.0
+    ratio_w = 0.0
+    if width > height:
+        ratio_h = height / h
+    else:
+        ratio_w = width  / w
+    ratio = max(ratio_w, ratio_h)
+    new_size = (int(ratio * w), int(ratio * h))
+    return cv2.resize(image, dsize=new_size)
+
+
+def create_source_target_popup_for_webcam(root: ctk.CTk, map: list) -> None:
+    global POPUP_LIVE, popup_status_label_live
+
+    POPUP_LIVE = ctk.CTkToplevel(root)
+    POPUP_LIVE.title("Source x Target Mapper")
+    POPUP_LIVE.geometry(f"{POPUP_LIVE_WIDTH}x{POPUP_LIVE_HEIGHT}")
+    POPUP_LIVE.focus()
+
+    def on_submit_click():
+        if has_valid_map():
+            POPUP_LIVE.destroy()
+            simplify_maps()
+            create_webcam_preview()
+        else:
+            update_pop_live_status("Atleast 1 source with target is required!")
+
+    def on_add_click():
+        add_blank_map()
+        refresh_data(map)
+        update_pop_live_status("Please provide mapping!")
+
+    popup_status_label_live = ctk.CTkLabel(POPUP_LIVE, text=None, justify='center')
+    popup_status_label_live.grid(row=1, column=0, pady=15)
+
+    add_button = ctk.CTkButton(POPUP_LIVE, text="Add", command=lambda: on_add_click())
+    add_button.place(relx=0.2, rely=0.92, relwidth=0.2, relheight=0.05)
+
+    
 def swap_faces_paths() -> None:
     modules.globals.source_path, modules.globals.target_path = modules.globals.target_path, modules.globals.source_path
     update_label_text(source_label, modules.globals.source_path)
@@ -596,3 +661,117 @@ def close_preview(preview: ctk.CTkToplevel) -> None:
     preview.destroy()
     global PREVIEW
     PREVIEW = None
+
+def update_webcam_source(scrollable_frame: ctk.CTkScrollableFrame, map: list, button_num: int) -> list:
+    global source_label_dict_live
+
+    source_path = ctk.filedialog.askopenfilename(title='select an source image', initialdir=RECENT_DIRECTORY_SOURCE, filetypes=[img_ft])
+
+    if "source" in map[button_num]:
+        map[button_num].pop("source")
+        source_label_dict_live[button_num].destroy()
+        del source_label_dict_live[button_num]
+        
+    if source_path == "":
+        return map
+    else:
+        cv2_img = cv2.imread(source_path)
+        face = get_one_face(cv2_img)
+
+        if face:
+            x_min, y_min, x_max, y_max = face['bbox']
+
+            map[button_num]['source'] = {
+                'cv2' : cv2_img[int(y_min):int(y_max), int(x_min):int(x_max)],
+                'face' : face
+                }
+            
+            image = Image.fromarray(cv2.cvtColor(map[button_num]['source']['cv2'], cv2.COLOR_BGR2RGB))
+            image = image.resize((MAPPER_PREVIEW_MAX_WIDTH, MAPPER_PREVIEW_MAX_HEIGHT), Image.LANCZOS)
+            tk_image = ctk.CTkImage(image, size=image.size)
+            
+            source_image = ctk.CTkLabel(scrollable_frame, text=f"S-{button_num}", width=MAPPER_PREVIEW_MAX_WIDTH, height=MAPPER_PREVIEW_MAX_HEIGHT)
+            source_image.grid(row=button_num, column=1, padx=10, pady=10)
+            source_image.configure(image=tk_image)
+            source_label_dict_live[button_num] = source_image
+        else:
+            update_pop_live_status("Face could not be detected in last upload!")
+        return map
+    
+def refresh_data(map: list):
+    global POPUP_LIVE
+
+    scrollable_frame = ctk.CTkScrollableFrame(POPUP_LIVE, width=POPUP_LIVE_SCROLL_WIDTH, height=POPUP_LIVE_SCROLL_HEIGHT)
+    scrollable_frame.grid(row=0, column=0, padx=0, pady=0, sticky='nsew')
+
+    def on_sbutton_click(map, button_num):
+        map = update_webcam_source(scrollable_frame, map, button_num)
+
+    def on_tbutton_click(map, button_num):
+        map = update_webcam_target(scrollable_frame, map, button_num)
+
+    for item in map:
+        id = item['id']
+
+        button = ctk.CTkButton(scrollable_frame, text="Select source image", command=lambda id=id: on_sbutton_click(map, id), width=DEFAULT_BUTTON_WIDTH, height=DEFAULT_BUTTON_HEIGHT)
+        button.grid(row=id, column=0, padx=30, pady=10)
+
+        x_label = ctk.CTkLabel(scrollable_frame, text=f"X", width=MAPPER_PREVIEW_MAX_WIDTH, height=MAPPER_PREVIEW_MAX_HEIGHT)
+        x_label.grid(row=id, column=2, padx=10, pady=10)
+
+        button = ctk.CTkButton(scrollable_frame, text="Select target image", command=lambda id=id: on_tbutton_click(map, id), width=DEFAULT_BUTTON_WIDTH, height=DEFAULT_BUTTON_HEIGHT)
+        button.grid(row=id, column=3, padx=20, pady=10)
+
+        if "source" in item:
+            image = Image.fromarray(cv2.cvtColor(item['source']['cv2'], cv2.COLOR_BGR2RGB))
+            image = image.resize((MAPPER_PREVIEW_MAX_WIDTH, MAPPER_PREVIEW_MAX_HEIGHT), Image.LANCZOS)
+            tk_image = ctk.CTkImage(image, size=image.size)
+
+            source_image = ctk.CTkLabel(scrollable_frame, text=f"S-{id}", width=MAPPER_PREVIEW_MAX_WIDTH, height=MAPPER_PREVIEW_MAX_HEIGHT)
+            source_image.grid(row=id, column=1, padx=10, pady=10)
+            source_image.configure(image=tk_image)
+
+        if "target" in item:
+            image = Image.fromarray(cv2.cvtColor(item['target']['cv2'], cv2.COLOR_BGR2RGB))
+            image = image.resize((MAPPER_PREVIEW_MAX_WIDTH, MAPPER_PREVIEW_MAX_HEIGHT), Image.LANCZOS)
+            tk_image = ctk.CTkImage(image, size=image.size)
+
+            target_image = ctk.CTkLabel(scrollable_frame, text=f"T-{id}", width=MAPPER_PREVIEW_MAX_WIDTH, height=MAPPER_PREVIEW_MAX_HEIGHT)
+            target_image.grid(row=id, column=4, padx=20, pady=10)
+            target_image.configure(image=tk_image)
+            
+def update_webcam_target(scrollable_frame: ctk.CTkScrollableFrame, map: list, button_num: int) -> list:
+    global target_label_dict_live
+
+    target_path = ctk.filedialog.askopenfilename(title='select an target image', initialdir=RECENT_DIRECTORY_SOURCE, filetypes=[img_ft])
+
+    if "target" in map[button_num]:
+        map[button_num].pop("target")
+        target_label_dict_live[button_num].destroy()
+        del target_label_dict_live[button_num]
+        
+    if target_path == "":
+        return map
+    else:
+        cv2_img = cv2.imread(target_path)
+        face = get_one_face(cv2_img)
+
+        if face:
+            x_min, y_min, x_max, y_max = face['bbox']
+
+            map[button_num]['target'] = {
+                'cv2' : cv2_img[int(y_min):int(y_max), int(x_min):int(x_max)],
+                'face' : face
+                }
+            
+            image = Image.fromarray(cv2.cvtColor(map[button_num]['target']['cv2'], cv2.COLOR_BGR2RGB))
+            image = image.resize((MAPPER_PREVIEW_MAX_WIDTH, MAPPER_PREVIEW_MAX_HEIGHT), Image.LANCZOS)
+            tk_image = ctk.CTkImage(image, size=image.size)
+            
+            target_image = ctk.CTkLabel(scrollable_frame, text=f"T-{button_num}", width=MAPPER_PREVIEW_MAX_WIDTH, height=MAPPER_PREVIEW_MAX_HEIGHT)
+            target_image.grid(row=button_num, column=4, padx=20, pady=10)
+            target_image.configure(image=tk_image)
+            target_label_dict_live[button_num] = target_image
+        else:
+            update_pop_live_status("Face could not be detected in last upload!")
+        return map
