@@ -9,9 +9,9 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKFLOW_DIR = os.path.join(ROOT_DIR, 'workflow')
 
 file_types = [
-    (lm.IMAGE_FILETYPE_NAME, '*.png *.jpg *.jpeg *.gif *.bmp'),
-    (lm.VIDEO_FILETYPE_NAME, '*.mp4 *.mkv')
-]
+    (lm.UI_DIALOG_IMAGE_FILETYPE_NAME, '*.png *.jpg *.jpeg *.gif *.bmp'),
+    (lm.UI_DIALOG_VIDEO_FILETYPE_NAME, '*.mp4 *.mkv')
+] 
 
 source_folder_path = None
 target_folder_path = None
