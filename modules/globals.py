@@ -3,6 +3,7 @@ from typing import List, Dict
 from modules.lang.manager import LanguageManager
 language_manager = LanguageManager()
 lm = language_manager.get_language()
+from typing import List, Dict, Any
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKFLOW_DIR = os.path.join(ROOT_DIR, 'workflow')
@@ -16,6 +17,9 @@ source_folder_path = None
 target_folder_path = None
 use_source_folder = None    # New toggle selection batch processing 
 use_target_folder = None    # New toggle selection batch processing
+souce_target_map = []
+simple_map = {}
+
 source_path = None
 target_path = None
 output_path = None
@@ -24,6 +28,7 @@ keep_fps = None
 keep_audio = None
 keep_frames = None
 many_faces = None
+map_faces = None
 color_correction = None  # New global variable for color correction toggle
 nsfw_filter = None
 video_encoder = None

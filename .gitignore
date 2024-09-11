@@ -24,3 +24,5 @@ models/GFPGANv1.4.pth
 models/DMDNet.pth
 models/*
 output/*
+faceswap/
+.vscode/
