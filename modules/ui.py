@@ -139,7 +139,8 @@ def create_switches(root: ctk.CTk) -> None:
 
     color_correction_switch = ctk.CTkSwitch(root, text=lm.COLOR_CORRECTION, command=lambda: setattr(modules.globals, 'color_correction', color_correction_switch.get()))
     color_correction_switch.grid(row=4, column=2, padx=10, pady=5, sticky='w')
-
+    update_ui_elements_text()
+    
 def update_status(text: str) -> None:
     status_label.configure(text=text)
     ROOT.update()
@@ -210,27 +211,6 @@ def select_output_path_dialog() -> str:
     
     return file_path
 
-def toggle_source_mode(use_folder: bool) -> None:
-    modules.globals.use_source_folder = use_folder
-    if use_folder:
-        select_face_button.configure(text=lm.SELECT_DIALOG_SOURCE_FOLDER)
-        source_label.configure(text=lm.SELECT_DIALOG_SOURCE_FOLDER)
-        status_label.configure(text=lm.SOURCE_ITEM_FOLDER_STATUS_LABEL)
-    else:
-        select_face_button.configure(text=lm.SELECT_DIALOG_SOURCE)
-        source_label.configure(text=lm.SELECT_DIALOG_SOURCE)
-        status_label.configure(text=lm.SOURCE_ITEM_STATUS_LABEL)
- 
-def toggle_target_mode(use_folder: bool) -> None:
-    modules.globals.use_target_folder = use_folder
-    if use_folder:
-        select_target_button.configure(text=lm.SELECT_DIALOG_TARGET_FOLDER)
-        target_label.configure(text=lm.SELECT_DIALOG_TARGET_FOLDER)
-        status_label.configure(text=lm.TARGET_ITEM_FOLDER_STATUS_LABEL)
-    else:
-        select_target_button.configure(text=lm.SELECT_DIALOG_TARGET)
-        target_label.configure(text=lm.SELECT_DIALOG_TARGET)
-        status_label.configure(text=lm.TARGET_ITEM_STATUS_LABEL)
     
 def toggle_preview() -> None:
     global PREVIEW
@@ -354,8 +334,6 @@ def update_ui_elements_text() -> None:
     preview_button.configure(text=lm.PREVIEW)
     live_button.configure(text=lm.LIVE)
     change_language_button.configure(text=lm.LANGUAGE_BUTTON)
-    select_face_button.configure(text=lm.SELECT_DIALOG_SOURCE)
-    select_target_button.configure(text=lm.SELECT_DIALOG_TARGET)
 
     use_folder_as_source_switch.configure(text=lm.USE_FOLDER_AS_SOURCE)
     use_folder_as_target_switch.configure(text=lm.USE_FOLDER_AS_TARGET)
@@ -366,6 +344,27 @@ def update_ui_elements_text() -> None:
     color_correction_switch.configure(text=lm.COLOR_CORRECTION)
     keep_fps_checkbox.configure(text=lm.KEEP_FPS)
 
+def toggle_source_mode(use_folder: bool) -> None:
+    modules.globals.use_source_folder = use_folder
+    if use_folder:
+        select_face_button.configure(text=lm.SELECT_DIALOG_SOURCE_FOLDER)
+        source_label.configure(text=lm.SELECT_DIALOG_SOURCE_FOLDER)
+        status_label.configure(text=lm.SOURCE_ITEM_FOLDER_STATUS_LABEL)
+    else:
+        select_face_button.configure(text=lm.SELECT_DIALOG_SOURCE)
+        source_label.configure(text=lm.SELECT_DIALOG_SOURCE)
+        status_label.configure(text=lm.SOURCE_ITEM_STATUS_LABEL)
+ 
+def toggle_target_mode(use_folder: bool) -> None:
+    modules.globals.use_target_folder = use_folder
+    if use_folder:
+        select_target_button.configure(text=lm.SELECT_DIALOG_TARGET_FOLDER)
+        target_label.configure(text=lm.SELECT_DIALOG_TARGET_FOLDER)
+        status_label.configure(text=lm.TARGET_ITEM_FOLDER_STATUS_LABEL)
+    else:
+        select_target_button.configure(text=lm.SELECT_DIALOG_TARGET)
+        target_label.configure(text=lm.SELECT_DIALOG_TARGET)
+        status_label.configure(text=lm.TARGET_ITEM_STATUS_LABEL)
 def update_image_preview(label: ctk.CTkLabel, image_path: str) -> None:
     image = Image.open(image_path)
     image = ImageOps.fit(image, (200, 200), Image.LANCZOS)
